@@ -1,0 +1,43 @@
+version: "3.8"
+
+services:
+  # Layanan Backend Node.js
+  backend:
+    build: ./BackEnd
+    container_name: SPARKDTI_Backend
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./BackEnd/.env
+    volumes:
+      - ./BackEnd:/app
+      - /app/node_modules
+    depends_on:
+      - ai-service
+
+  # Layanan AI FastAPI
+  ai-service:
+    build: ./AI
+    container_name: SPARKDTI_AI
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./AI:/app
+
+  # Layanan Frontend React
+  frontend:
+    build: ./FrontEnd
+    container_name: SPARKDTI_Frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:5000/api
+    volumes:
+      - ./FrontEnd:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+
+networks:
+  default:
+    name: spark-network

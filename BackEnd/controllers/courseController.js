@@ -37,7 +37,7 @@ exports.analyzeTranscript = async (req, res) => {
     });
 
     const aiResponse = await axios.post(
-      "http://127.0.0.1:8000/api/academic/upload-transcript",
+      "http://ai-service:8000/api/academic/upload-transcript",
       form,
       {
         headers: {
