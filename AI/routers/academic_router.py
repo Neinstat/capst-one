@@ -1,4 +1,6 @@
+import os
 from fastapi import APIRouter, UploadFile, File, HTTPException
+
 from utils.pdf_extractor import extract_text_from_pdf
 from services.transcript_logic import analyze_transcript_with_ai
 
@@ -6,21 +8,27 @@ router = APIRouter()
 
 @router.post("/upload-transcript")
 async def process_transcript(file: UploadFile = File(...)):
-    if file.content_type != "application/pdf":
-        raise HTTPException(status_code=400, detail="Format file harus PDF")
-    
-    file_bytes = await file.read()
+
+    if not file.filename.lower().endswith(".pdf"):
+        raise HTTPException(status_code=400, detail="File harus berupa PDF.")
     
     try:
-        safe_raw_text = extract_text_from_pdf(file_bytes)
+        file_bytes = await file.read()
+        raw_text = extract_text_from_pdf(file_bytes)
         
-        ai_analysis = await analyze_transcript_with_ai(safe_raw_text)
-        
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Terjadi kesalahan: {str(e)}")
+        if not raw_text.strip():
+            raise HTTPException(status_code=400, detail="Tidak ada teks yang dapat diekstrak dari PDF.")
 
-    return {
-        "filename": file.filename,
-        "status": "success",
-        "data": ai_analysis
-    }
+        llm_output = await analyze_transcript_with_ai(raw_text)
+        
+        return {
+            "data": {
+                "raw_text": raw_text,
+                "courses": llm_output.get("courses", []),
+                "skill_data": llm_output.get("skill_data", []),
+                "career_matches": llm_output.get("career_matches", [])
+            }
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Terjadi kesalahan pada AI Service: {str(e)}")
