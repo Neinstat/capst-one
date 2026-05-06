@@ -18,51 +18,36 @@ KUNCI EKSTRAKSI: Setiap mata kuliah SELALU ditandai dengan "Kode Mata Kuliah" ya
    - Baca teks mentah kata demi kata dari awal hingga akhir.
    - Temukan SETIAP KODE MATA KULIAH berdasarkan pola di atas.
    - Ekstrak dengan tepat: Kode, Nama Mata Kuliah, Jumlah SKS (dalam format angka), dan Nilai (huruf: A, AB, B, BC, C, D, E).
-   - KRITIKAL: Jangan sampai ada SATUPUN mata kuliah yang terlewat. Dokumen utuh "career_matches": [
-      {
-        "role": "Cloud DevOps Engineer",
-        "match": 95,
-        "color": "#3b82f6"
-      },
-      {
-        "role": "Cybersecurity Analyst",
-        "match": 90,
-        "color": "#ef4444"
-      },
-      {
-        "role": "Data Scientist",
-        "match": 80,
-        "color": "#34c759"
-      }
-    ]biasanya memiliki 30 hingga 60 mata kuliah. Sisir pelan-pelan.
+   - KRITIKAL: Jangan sampai ada SATUPUN mata kuliah yang terlewat. Dokumen utuh biasanya memiliki 20 hingga 60 mata kuliah. Sisir pelan-pelan.
 
 2. ANALISIS SKILL (UNTUK VISUALISASI CHART FRONTEND):
    - Hitung skor kemahiran (score 0-100) untuk 6 domain IT: "Web Dev", "Database", "Cloud", "AI/ML", "Security", "Networking".
-   - Logika Penilaian: Identifikasi matkul yang relevan dengan domain tersebut. Berikan skor proporsional berdasarkan Nilai yang didapat (A=100, AB=85, B=75, C=60). Jika tidak ada matkul relevan, berikan skor dasar (misal 10-20).
+   - Logika Penilaian: Identifikasi matkul yang relevan dengan domain tersebut. Konversi nilainya (A=100, AB=85, B=75, C=60). Jika ada LEBIH DARI SATU matkul relevan, hitung nilai RATA-RATANYA agar chart terlihat realistis (hindari memberikan nilai 100 sempurna kecuali benar-benar kumulatif rata-ratanya 100). Jika tidak ada matkul relevan, berikan skor dasar (10-20).
 
-3. REKOMENDASI KARIR (UNTUK KARTU UI FRONTEND):
-   - Berdasarkan skor skill tertinggi, hasilkan 2-3 role karir IT spesifik yang paling cocok (misal: "Cloud DevOps Engineer", "Cybersecurity Analyst", "AI Researcher").
+3. REKOMENDASI KARIR (PERSONALISASI & BUKTI DATA):
+   - WAJIB BERDASARKAN DATA: Hasilkan 2-3 role karir IT yang SANGAT SPESIFIK murni dari skor skill tertinggi dan nama mata kuliah yang menonjol.
+   - CONTOH VARIASI: Gunakan spektrum karir IT yang luas dan relevan (contoh: "Frontend Engineer", "Data Scientist", "UI/UX Designer", "Network Architect", "Game Developer", "QA Automation", "ERP Consultant", dll) yang benar-benar relevan dengan transkrip mahasiswa ini. Pastikan nama role SINGKAT dan PADAT (Maksimal 2-3 kata, contoh: "AI Engineer" bukan "Artificial Intelligence/Machine Learning Engineer") agar tidak merusak layout UI Frontend.
    - Hitung persentase kecocokan ("match" 0-100%).
-   - Berikan warna ("color") dalam format HEX code yang melambangkan role tersebut agar UI terlihat menarik (contoh: Biru #3b82f6 untuk Cloud, Merah #ef4444 untuk Security).
+   - Berikan warna ("color") dalam format HEX code yang melambangkan role tersebut. Gunakan palet warna VIBRANT dan MODERN khas UI/UX (contoh: Emerald #10b981, Violet #8b5cf6, Amber #f59e0b) agar komponen visual Frontend terlihat hidup.
 
 === FORMAT OUTPUT JSON ===
-Anda WAJIB memberikan output HANYA dalam bentuk JSON valid murni. DILARANG menambahkan teks pengantar, markdown luar, atau penutup apapun.
+Anda WAJIB memberikan output HANYA dalam bentuk JSON valid murni. DILARANG menambahkan teks pengantar, markdown luar, atau penutup apapun. Ganti teks dengan kurung siku < > menggunakan hasil analisis Anda!
 
 {
   "courses": [
     {"kode": "EE234101", "nama": "Pengantar Teknologi Elektro", "sks": 2, "nilai": "AB"}
   ],
   "skill_data": [
-    {"subject": "Web Dev", "score": 85},
-    {"subject": "Database", "score": 70},
-    {"subject": "Cloud", "score": 90},
-    {"subject": "AI/ML", "score": 60},
-    {"subject": "Security", "score": 80},
-    {"subject": "Networking", "score": 75}
+    {"subject": "Web Dev", "score": <SCORE_WEB_DEV>},
+    {"subject": "Database", "score": <SCORE_DATABASE>},
+    {"subject": "Cloud", "score": <SCORE_CLOUD>},
+    {"subject": "AI/ML", "score": <SCORE_AI_ML>},
+    {"subject": "Security", "score": <SCORE_SECURITY>},
+    {"subject": "Networking", "score": <SCORE_NETWORKING>}
   ],
   "career_matches": [
-    {"role": "Cloud DevOps Engineer", "match": 90, "color": "#3b82f6"},
-    {"role": "Cybersecurity Analyst", "match": 85, "color": "#ef4444"}
+    {"role": "<NAMA_ROLE_KARIR_1>", "match": <MATCH_ROLE_1>, "color": "<HEX_COLOR_1>"},
+    {"role": "<NAMA_ROLE_KARIR_2>", "match": <MATCH_ROLE_2>, "color": "<HEX_COLOR_2>"}
   ]
 }
 """
