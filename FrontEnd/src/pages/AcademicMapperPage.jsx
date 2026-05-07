@@ -7,8 +7,9 @@ import {
   ResponsiveContainer,
   Tooltip,
 } from "recharts";
+import { Info } from "lucide-react";
 import PdfDropzone from "../components/shared/PdfDropzone";
-import { useAuthStore } from "../store/authStore"; // Import store untuk akses token[cite: 6]
+import { useAuthStore } from "../store/authStore";
 
 const PROCESSING_STEPS = [
   "Upload file",
@@ -107,20 +108,42 @@ export default function AcademicMapperPage() {
             {file && (
               <button
                 onClick={handleUpload}
-                className="mt-4 w-full py-2.5 rounded-xl bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition-all"
+                className="mt-6 w-full py-4 rounded-2xl bg-green-600 text-white text-lg font-bold hover:bg-green-700 transition-all shadow-md active:scale-[0.98]"
               >
                 Mulai Analisis AI
               </button>
             )}
           </div>
-          <div className="bg-green-50 border border-green-100 rounded-2xl p-6">
-            <h3 className="text-sm font-bold text-green-800 mb-2">
-              Automated Analysis
-            </h3>
-            <p className="text-xs text-green-700">
-              Sistem menyamarkan data sensitif sebelum diproses AI untuk
-              keamanan Anda.
+          <div className="bg-blue-50 border border-blue-100 rounded-2xl p-6">
+            <div className="flex items-center gap-2 mb-3">
+              <Info className="w-4 h-4 text-blue-600" />
+              <h2 className="text-lg font-extrabold text-blue-900">
+                Panduan Transkrip
+              </h2>
+            </div>
+            <p className="text-[14px] font-semibold text-blue-700 mb-4">
+              Perhatian: Mohon gunakan transkrip yang sesuai agar hasil analisis akurat.
             </p>
+            <div className="space-y-3">
+              {[
+                "Buka siakad myITS",
+                "Masuk ke modul Laporan",
+                "Pilih Transkrip Sementara",
+                "Download dengan format Horizontal (.pdf)",
+              ].map((step, i) => (
+                <div key={i} className="flex items-start gap-4 text-[14px] text-blue-700 font-semibold leading-snug">
+                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-[13px] font-black">
+                    {i + 1}
+                  </span>
+                  {step}
+                </div>
+              ))}
+            </div>
+            <div className="mt-8 pt-4 border-t border-blue-100">
+              <p className="text-[12px] text-blue-500 italic">
+                *Sistem menyamarkan data sensitif sebelum diproses AI untuk keamanan Anda.
+              </p>
+            </div>
           </div>
         </div>
       )}
@@ -164,30 +187,30 @@ export default function AcademicMapperPage() {
                 </RadarChart>
               </ResponsiveContainer>
             </div>
-            <div className="bg-white rounded-2xl border border-gray-200 p-6">
-              <h2 className="text-sm font-semibold text-gray-700 mb-4">
+            <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm">
+              <h2 className="text-lg font-extrabold text-gray-800 mb-8">
                 Rekomendasi Jalur Karir
               </h2>
-              <div className="space-y-4">
+              <div className="space-y-6">
                 {resultData.careerMatches.map((career, i) => (
                   <div
                     key={i}
-                    className="p-4 rounded-xl border border-gray-100 bg-gray-50"
+                    className="p-6 rounded-2xl border border-gray-100 bg-gray-50 hover:bg-white transition-colors duration-300"
                   >
-                    <div className="flex justify-between mb-2">
-                      <span className="text-sm font-bold text-gray-800">
+                    <div className="flex justify-between mb-4">
+                      <span className="text-lg font-extrabold text-gray-900">
                         {career.role}
                       </span>
                       <span
-                        className="text-xs font-medium"
+                        className="text-base font-black"
                         style={{ color: career.color }}
                       >
                         {career.match}% Match
                       </span>
                     </div>
-                    <div className="w-full bg-gray-200 h-1.5 rounded-full">
+                    <div className="w-full bg-gray-200 h-3 rounded-full overflow-hidden">
                       <div
-                        className="h-full rounded-full"
+                        className="h-full rounded-full transition-all duration-1000"
                         style={{
                           width: `${career.match}%`,
                           backgroundColor: career.color,
@@ -213,10 +236,10 @@ export default function AcademicMapperPage() {
 
 function StatsCard({ label, value, isGpa }) {
   return (
-    <div className="bg-white p-4 rounded-2xl border border-gray-200">
-      <p className="text-[10px] font-bold text-gray-400 uppercase">{label}</p>
+    <div className="bg-white p-6 rounded-3xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+      <p className="text-sm font-black text-gray-400 uppercase tracking-widest">{label}</p>
       <p
-        className={`text-lg font-semibold mt-1 ${isGpa ? "text-green-600" : "text-gray-900"}`}
+        className={`text-3xl font-black mt-3 ${isGpa ? "text-green-600" : "text-gray-900"}`}
       >
         {value}
       </p>

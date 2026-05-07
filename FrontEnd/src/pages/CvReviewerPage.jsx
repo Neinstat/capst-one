@@ -2,7 +2,6 @@
 // ─────────────────────────────────────────────────────────────────────────────
 import { useState } from 'react'
 import PdfDropzone from '../components/shared/PdfDropzone'
-import { CAREER_ROLES } from '../lib/utils'
 
 export default function CvReviewerPage() {
   const [file, setFile] = useState(null)
@@ -38,21 +37,13 @@ export default function CvReviewerPage() {
               </div>
               <div>
                 <label className="block text-xs font-medium text-gray-700 mb-2">Target Role</label>
-                <div className="grid grid-cols-2 gap-2">
-                  {CAREER_ROLES.map((r) => (
-                    <button
-                      key={r.id}
-                      onClick={() => setRole(r.id)}
-                      className={`px-3 py-2 rounded-lg border text-xs font-medium text-left transition-all
-                        ${role === r.id
-                          ? 'border-blue-400 bg-blue-50 text-blue-700'
-                          : 'border-gray-200 text-gray-600 hover:border-gray-300'
-                        }`}
-                    >
-                      {r.label}
-                    </button>
-                  ))}
-                </div>
+                <input
+                  type="text"
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                  placeholder="e.g., Data Engineer Specialist"
+                  className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+                />
               </div>
               <div>
                 <label className="block text-xs font-medium text-gray-700 mb-1.5">Target Perusahaan (opsional)</label>
@@ -60,7 +51,7 @@ export default function CvReviewerPage() {
                   type="text"
                   value={company}
                   onChange={(e) => setCompany(e.target.value)}
-                  placeholder="e.g., Gojek · Backend Engineer Intern"
+                  placeholder="e.g., Huawei Indonesia"
                   className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
                 />
               </div>
