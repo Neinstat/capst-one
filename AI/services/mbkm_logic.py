@@ -6,7 +6,7 @@ Handles SKS conversion calculation, activity detection, and AI response generati
 import os
 import re
 import requests
-from typing import Dict, Any, Tuple
+from typing import Dict, Any, Tuple, Optional
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -43,7 +43,7 @@ DEFAULT_DOCUMENTS = ["LoA", "PKS", "Form AK01", "Form Matching"]
 # HELPER: Parse Duration
 # ─────────────────────────────────────────────────────────────────────────────
 
-def parse_duration_to_weeks(message: str) -> int | None:
+def parse_duration_to_weeks(message: str) -> Optional[int]:
     """
     Parse message to extract duration and convert to weeks.
     
