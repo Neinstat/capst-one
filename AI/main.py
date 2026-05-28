@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import academic_router
+from routers import academic_router, mbkm_router
 
 app = FastAPI(title="SPARK DTI AI Service", version="1.0.0")
 
@@ -13,7 +13,12 @@ app.add_middleware(
 )
 
 app.include_router(academic_router.router, prefix="/api/academic", tags=["Academic"])
+app.include_router(mbkm_router.router, prefix="/api/mbkm", tags=["MBKM"])
 
 @app.get("/")
 def read_root():
     return {"status": "ok", "message": "SPARK DTI AI Service is running."}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
