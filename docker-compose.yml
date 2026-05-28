@@ -7,6 +7,8 @@ services:
       - "5000:5000"
     env_file:
       - ./BackEnd/.env
+    environment:
+      - AI_SERVICE_URL=http://ai-service:8000
     volumes:
       - ./BackEnd:/app
       - /app/node_modules

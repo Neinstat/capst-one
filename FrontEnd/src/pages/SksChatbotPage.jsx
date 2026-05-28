@@ -9,6 +9,7 @@ export default function SksChatbotPage() {
   const [subJalur, setSubJalur] = useState(null)
   const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const CONVERSION_TABLE = [
     { type: 'Magang 3–6 minggu', sks: '3 SKS' },
@@ -18,15 +19,39 @@ export default function SksChatbotPage() {
     { type: 'PKM Lolos Pendanaan', sks: '6 SKS' },
   ]
 
-  function handleSend() {
-    if (!input.trim()) return
+  async function handleSend() {
+    if (!input.trim() || loading) return
+    
     const userMsg = { role: 'user', text: input }
-    const botMsg = {
-      role: 'bot',
-      text: `Berdasarkan input kamu untuk jalur ${jalur?.label ?? ''}, estimasi konversi SKS sedang diproses. (Hubungkan ke backend AI untuk respons nyata)`,
-    }
-    setMessages((m) => [...m, userMsg, botMsg])
+    setMessages((m) => [...m, userMsg])
     setInput('')
+    setLoading(true)
+
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+      const response = await fetch(`${apiUrl}/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: input })
+      })
+
+      const data = await response.json()
+      const botMsg = {
+        role: 'bot',
+        text: data.reply || 'Maaf, terjadi error. Coba lagi.',
+        data: data.data
+      }
+      setMessages((m) => [...m, botMsg])
+    } catch (error) {
+      console.error('Chat error:', error)
+      const errorMsg = {
+        role: 'bot',
+        text: 'Maaf, terjadi error saat menghubungi server. Pastikan backend berjalan di http://localhost:5000'
+      }
+      setMessages((m) => [...m, errorMsg])
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -137,15 +162,17 @@ export default function SksChatbotPage() {
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                onKeyDown={(e) => e.key === 'Enter' && !loading && handleSend()}
                 placeholder="Ketik detail kegiatan MBKM kamu..."
-                className="flex-1 px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-200"
+                disabled={loading}
+                className="flex-1 px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-200 disabled:bg-gray-50"
               />
               <button
                 onClick={handleSend}
-                className="px-4 py-2 rounded-xl bg-red-600 text-white text-sm font-medium hover:bg-red-700 transition-colors"
+                disabled={loading}
+                className="px-4 py-2 rounded-xl bg-red-600 text-white text-sm font-medium hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Kirim
+                {loading ? '...' : 'Kirim'}
               </button>
             </div>
           </div>
