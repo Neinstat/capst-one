@@ -5,6 +5,7 @@ const cors = require("cors");
 // Import routes dan config lainnya setelah dotenv
 const authRoutes = require("./routes/authRoutes");
 const courseRoutes = require("./routes/courseRoutes");
+const chatRoutes = require("./routes/chatRoutes");
 
 const app = express();
 
@@ -19,6 +20,7 @@ console.log(
 
 app.use("/api/auth", authRoutes);
 app.use("/api/courses", courseRoutes);
+app.use("/api/chat", chatRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
