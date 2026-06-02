@@ -43,3 +43,16 @@ export function validatePdf(file, maxMb = 10) {
 
   return { valid: true, error: null }
 }
+
+export function checkIsAlumni(nrp) {
+  if (!nrp) return false
+  const nrpStr = String(nrp)
+  if (nrpStr.startsWith('ALUMNI')) return true
+  if (nrpStr.length >= 6) {
+    const year = parseInt(nrpStr.substring(4, 6), 10)
+    if (!isNaN(year) && year <= 22) {
+      return true
+    }
+  }
+  return false
+}

@@ -1,6 +1,6 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom'
 import { useAuthStore, useUIStore } from '../../store/authStore'
-import { FEATURE_COLORS } from '../../lib/utils'
+import { FEATURE_COLORS, checkIsAlumni } from '../../lib/utils'
 
 const NAV_ITEMS = [
   { path: '/academic-mapper', key: 'academic-mapper', icon: MapIcon, label: 'Academic Mapper' },
@@ -14,6 +14,8 @@ export default function MainLayout() {
   const { user, logout } = useAuthStore()
   const { sidebarOpen, toggleSidebar } = useUIStore()
   const navigate = useNavigate()
+
+  const isAlumni = checkIsAlumni(user?.nrp)
 
   function handleLogout() {
     logout()
@@ -91,7 +93,12 @@ export default function MainLayout() {
                 </span>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">{user?.nama ?? 'Mahasiswa'}</p>
+                <div className="flex items-center gap-1.5">
+                  <p className="text-sm font-medium text-gray-900 truncate">{user?.nama ?? 'Mahasiswa'}</p>
+                  <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-bold uppercase tracking-wider ${isAlumni ? 'bg-pink-50 text-pink-600 border border-pink-100' : 'bg-green-50 text-green-600 border border-green-100'}`}>
+                    {isAlumni ? 'Alumni' : 'Aktif'}
+                  </span>
+                </div>
                 <p className="text-xs text-gray-500 truncate">{user?.nrp ?? '5027231000'}</p>
               </div>
               <button

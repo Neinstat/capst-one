@@ -29,9 +29,7 @@ export default function LoginPage() {
 
       if (response.ok) {
         login({
-          nrp: data.user.nrp,
-          nama: data.user.nama,
-          semester: data.user.semester,
+          user: data.user,
           token: data.token,
         });
         navigate("/academic-mapper");
