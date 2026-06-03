@@ -327,133 +327,144 @@ export default function OpportunityBoardPage() {
       )}
 
       {/* Modal Posting Baru (Alumni Only) */}
+      {/* Modal Posting Baru (Alumni Only) */}
       {isPosting && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-md transition-opacity duration-300" onClick={() => setIsPosting(false)} />
-          <form
-            onSubmit={handleAddJob}
-            className="relative w-full max-w-lg bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl border border-gray-200 p-8 overflow-y-auto max-h-[90vh] animate-modal-scale-in flex flex-col justify-between"
-          >
-            {/* Top decorative gradient bar */}
-            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 rounded-t-3xl" />
+        <div className="fixed inset-0 z-[200] overflow-y-auto">
 
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h2 className="text-xl font-extrabold text-gray-900">Posting Lowongan Baru</h2>
-                <p className="text-[11px] font-bold text-pink-500 uppercase tracking-wider mt-0.5">Kontribusi Alumni</p>
-              </div>
-              <button type="button" onClick={() => setIsPosting(false)} className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-gray-700 border border-gray-200/50 hover:bg-gray-100 transition-colors">✕</button>
-            </div>
+          {/* BACKDROP BLUR FULL SCREEN (Sama seperti detail lowongan) */}
+          <div
+            className="fixed inset-0 bg-slate-950/60 backdrop-blur-md transition-opacity duration-300"
+            onClick={() => setIsPosting(false)}
+          />
 
-            <div className="space-y-4 flex-1">
-              <div>
-                <label className="block text-xs font-extrabold text-gray-600 mb-1.5 uppercase tracking-widest">Role / Jabatan</label>
-                <input
-                  required
-                  placeholder="e.g. Backend Engineer Intern"
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:ring-4 focus:ring-pink-100 focus:border-pink-500 focus:outline-none transition-all font-semibold"
-                  value={newJob.title}
-                  onChange={e => setNewJob({ ...newJob, title: e.target.value })}
-                />
-              </div>
+          {/* Container Posisi Modal */}
+          <div className="flex min-h-full items-center justify-center p-4">
+            <form
+              onSubmit={handleAddJob}
+              className="relative w-full max-w-lg bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl border border-gray-200 p-8 overflow-y-auto max-h-[90vh] animate-modal-scale-in flex flex-col justify-between overflow-hidden"
+            >
+              {/* Top decorative gradient bar */}
+              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500" />
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="flex items-center justify-between mb-6">
                 <div>
-                  <label className="block text-xs font-extrabold text-gray-600 mb-1.5 uppercase tracking-widest">Perusahaan</label>
+                  <h2 className="text-xl font-extrabold text-gray-900">Posting Lowongan Baru</h2>
+                  <p className="text-[11px] font-bold text-pink-500 uppercase tracking-wider mt-0.5">Kontribusi Alumni</p>
+                </div>
+                <button type="button" onClick={() => setIsPosting(false)} className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-gray-700 border border-gray-200/50 hover:bg-gray-100 transition-colors">✕</button>
+              </div>
+
+              <div className="space-y-4 flex-1">
+                {/* ... isi input form Anda tetap sama seperti sebelumnya ... */}
+                <div>
+                  <label className="block text-xs font-extrabold text-gray-600 mb-1.5 uppercase tracking-widest">Role / Jabatan</label>
                   <input
                     required
-                    placeholder="e.g. Tokopedia"
+                    placeholder="e.g. Backend Engineer Intern"
                     className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:ring-4 focus:ring-pink-100 focus:border-pink-500 focus:outline-none transition-all font-semibold"
-                    value={newJob.company}
-                    onChange={e => setNewJob({ ...newJob, company: e.target.value })}
+                    value={newJob.title}
+                    onChange={e => setNewJob({ ...newJob, title: e.target.value })}
                   />
                 </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-extrabold text-gray-600 mb-1.5 uppercase tracking-widest">Perusahaan</label>
+                    <input
+                      required
+                      placeholder="e.g. Tokopedia"
+                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:ring-4 focus:ring-pink-100 focus:border-pink-500 focus:outline-none transition-all font-semibold"
+                      value={newJob.company}
+                      onChange={e => setNewJob({ ...newJob, company: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-extrabold text-gray-600 mb-1.5 uppercase tracking-widest">Lokasi</label>
+                    <input
+                      required
+                      placeholder="e.g. Jakarta / Remote"
+                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:ring-4 focus:ring-pink-100 focus:border-pink-500 focus:outline-none transition-all font-semibold"
+                      value={newJob.location}
+                      onChange={e => setNewJob({ ...newJob, location: e.target.value })}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-extrabold text-gray-600 mb-1.5 uppercase tracking-widest">Tipe</label>
+                    <select
+                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:ring-4 focus:ring-pink-100 focus:border-pink-500 focus:outline-none transition-all font-semibold bg-white cursor-pointer"
+                      value={newJob.type}
+                      onChange={e => setNewJob({ ...newJob, type: e.target.value })}
+                    >
+                      <option value="Internship">Internship</option>
+                      <option value="Full-time">Full-time</option>
+                      <option value="Contract">Contract</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-extrabold text-gray-600 mb-1.5 uppercase tracking-widest">Min. Semester</label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="8"
+                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:ring-4 focus:ring-pink-100 focus:border-pink-500 focus:outline-none transition-all font-semibold"
+                      value={newJob.minSem}
+                      onChange={e => setNewJob({ ...newJob, minSem: parseInt(e.target.value) || 1 })}
+                    />
+                  </div>
+                </div>
+
                 <div>
-                  <label className="block text-xs font-extrabold text-gray-600 mb-1.5 uppercase tracking-widest">Lokasi</label>
+                  <label className="block text-xs font-extrabold text-gray-600 mb-1.5 uppercase tracking-widest">Durasi Pekerjaan</label>
                   <input
-                    required
-                    placeholder="e.g. Jakarta / Remote"
+                    placeholder="e.g. 3 - 6 Bulan"
                     className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:ring-4 focus:ring-pink-100 focus:border-pink-500 focus:outline-none transition-all font-semibold"
-                    value={newJob.location}
-                    onChange={e => setNewJob({ ...newJob, location: e.target.value })}
+                    value={newJob.duration}
+                    onChange={e => setNewJob({ ...newJob, duration: e.target.value })}
                   />
                 </div>
-              </div>
 
-              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-extrabold text-gray-600 mb-1.5 uppercase tracking-widest">Tipe</label>
-                  <select
-                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:ring-4 focus:ring-pink-100 focus:border-pink-500 focus:outline-none transition-all font-semibold bg-white cursor-pointer"
-                    value={newJob.type}
-                    onChange={e => setNewJob({ ...newJob, type: e.target.value })}
-                  >
-                    <option value="Internship">Internship</option>
-                    <option value="Full-time">Full-time</option>
-                    <option value="Contract">Contract</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-extrabold text-gray-600 mb-1.5 uppercase tracking-widest">Min. Semester</label>
+                  <label className="block text-xs font-extrabold text-gray-600 mb-1.5 uppercase tracking-widest">Skills / Tags (pisahkan dengan koma)</label>
                   <input
-                    type="number"
-                    min="1"
-                    max="8"
+                    placeholder="e.g. React, Node.js, SQL"
                     className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:ring-4 focus:ring-pink-100 focus:border-pink-500 focus:outline-none transition-all font-semibold"
-                    value={newJob.minSem}
-                    onChange={e => setNewJob({ ...newJob, minSem: parseInt(e.target.value) || 1 })}
+                    value={newJob.tags}
+                    onChange={e => setNewJob({ ...newJob, tags: e.target.value })}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-extrabold text-gray-600 mb-1.5 uppercase tracking-widest">Deskripsi / Catatan Tambahan</label>
+                  <textarea
+                    rows="3"
+                    placeholder="Ceritakan kualifikasi, tugas utama, atau link pendaftaran..."
+                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:ring-4 focus:ring-pink-100 focus:border-pink-500 focus:outline-none transition-all font-semibold resize-none"
+                    value={newJob.notes}
+                    onChange={e => setNewJob({ ...newJob, notes: e.target.value })}
                   />
                 </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-extrabold text-gray-600 mb-1.5 uppercase tracking-widest">Durasi Pekerjaan</label>
-                <input
-                  placeholder="e.g. 3 - 6 Bulan"
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:ring-4 focus:ring-pink-100 focus:border-pink-500 focus:outline-none transition-all font-semibold"
-                  value={newJob.duration}
-                  onChange={e => setNewJob({ ...newJob, duration: e.target.value })}
-                />
+              <div className="mt-8 flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setIsPosting(false)}
+                  className="flex-1 py-3.5 rounded-xl border border-gray-200 text-sm font-bold text-gray-500 hover:bg-gray-50 hover:text-gray-700 transition-colors"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 py-3.5 rounded-xl bg-gradient-to-r from-pink-500 to-indigo-600 hover:from-pink-600 hover:to-indigo-700 text-white text-sm font-bold shadow-lg shadow-pink-500/20 hover:scale-[1.01] active:scale-95 transition-all"
+                >
+                  Posting Lowongan
+                </button>
               </div>
-
-              <div>
-                <label className="block text-xs font-extrabold text-gray-600 mb-1.5 uppercase tracking-widest">Skills / Tags (pisahkan dengan koma)</label>
-                <input
-                  placeholder="e.g. React, Node.js, SQL"
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:ring-4 focus:ring-pink-100 focus:border-pink-500 focus:outline-none transition-all font-semibold"
-                  value={newJob.tags}
-                  onChange={e => setNewJob({ ...newJob, tags: e.target.value })}
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-extrabold text-gray-600 mb-1.5 uppercase tracking-widest">Deskripsi / Catatan Tambahan</label>
-                <textarea
-                  rows="3"
-                  placeholder="Ceritakan kualifikasi, tugas utama, atau link pendaftaran..."
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:ring-4 focus:ring-pink-100 focus:border-pink-500 focus:outline-none transition-all font-semibold resize-none"
-                  value={newJob.notes}
-                  onChange={e => setNewJob({ ...newJob, notes: e.target.value })}
-                />
-              </div>
-            </div>
-
-            <div className="mt-8 flex gap-3">
-              <button
-                type="button"
-                onClick={() => setIsPosting(false)}
-                className="flex-1 py-3.5 rounded-xl border border-gray-200 text-sm font-bold text-gray-500 hover:bg-gray-50 hover:text-gray-700 transition-colors"
-              >
-                Batal
-              </button>
-              <button
-                type="submit"
-                className="flex-1 py-3.5 rounded-xl bg-gradient-to-r from-pink-500 to-indigo-600 hover:from-pink-600 hover:to-indigo-700 text-white text-sm font-bold shadow-lg shadow-pink-500/20 hover:scale-[1.01] active:scale-95 transition-all"
-              >
-                Posting Lowongan
-              </button>
-            </div>
-          </form>
+            </form>
+          </div>
         </div>
       )}
 
@@ -568,62 +579,72 @@ export default function OpportunityBoardPage() {
       )}
 
       {/* Modal Notifikasi Global */}
+      {/* Modal Notifikasi Global */}
       {isGlobalReminderOpen && (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-md transition-opacity duration-300" onClick={() => setIsGlobalReminderOpen(false)} />
-          <form
-            onSubmit={handleSaveNotification}
-            className="relative w-full max-w-sm bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl border border-gray-200 p-8 animate-modal-scale-in overflow-hidden"
-          >
-            {/* Top decorative gradient bar */}
-            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500" />
+        <div className="fixed inset-0 z-[200] overflow-y-auto">
 
-            <div className="flex items-center justify-between mb-2">
-              <h2 className="text-xl font-extrabold text-gray-900 tracking-tight">Aktifkan Notifikasi</h2>
-              <button type="button" onClick={() => setIsGlobalReminderOpen(false)} className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-gray-700 border border-gray-200/50 hover:bg-gray-100 transition-colors flex-shrink-0">✕</button>
-            </div>
-            <p className="text-xs font-semibold text-gray-400 mt-1 mb-6">Kami akan mengirimi Anda email jika ada lowongan baru yang sesuai.</p>
+          {/* BACKDROP BLUR FULL SCREEN - Menutup seluruh layar termasuk navbar */}
+          <div
+            className="fixed inset-0 bg-slate-950/60 backdrop-blur-md transition-opacity duration-300"
+            onClick={() => setIsGlobalReminderOpen(false)}
+          />
 
-            <div className="space-y-4">
-              <div>
-                <label className="block text-xs font-extrabold text-gray-600 mb-1.5 uppercase tracking-widest">Role yang dicari</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Backend Engineer"
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:ring-4 focus:ring-pink-100 focus:border-pink-500 focus:outline-none transition-all font-semibold"
-                  value={globalReminder.role}
-                  onChange={e => setGlobalReminder({ ...globalReminder, role: e.target.value })}
-                />
+          {/* Container Posisi Modal */}
+          <div className="flex min-h-full items-center justify-center p-4">
+            <form
+              onSubmit={handleSaveNotification}
+              className="relative w-full max-w-sm bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl border border-gray-200 p-8 animate-modal-scale-in overflow-hidden"
+            >
+              {/* Top decorative gradient bar */}
+              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500" />
+
+              <div className="flex items-center justify-between mb-2">
+                <h2 className="text-xl font-extrabold text-gray-900 tracking-tight">Aktifkan Notifikasi</h2>
+                <button type="button" onClick={() => setIsGlobalReminderOpen(false)} className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-gray-700 border border-gray-200/50 hover:bg-gray-100 transition-colors flex-shrink-0">✕</button>
               </div>
-              <div>
-                <label className="block text-xs font-extrabold text-gray-600 mb-1.5 uppercase tracking-widest">Email Penerima</label>
-                <input
-                  type="email"
-                  required
-                  placeholder="nama@email.com"
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:ring-4 focus:ring-pink-100 focus:border-pink-500 focus:outline-none transition-all font-semibold"
-                  value={globalReminder.email}
-                  onChange={e => setGlobalReminder({ ...globalReminder, email: e.target.value })}
-                />
-              </div>
-            </div>
+              <p className="text-xs font-semibold text-gray-400 mt-1 mb-6">Kami akan mengirimi Anda email jika ada lowongan baru yang sesuai.</p>
 
-            <div className="mt-8 space-y-3">
-              <button
-                type="submit"
-                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-pink-500 to-indigo-600 hover:from-pink-600 hover:to-indigo-700 text-white text-sm font-bold shadow-lg shadow-pink-500/20 active:scale-95 transition-all"
-              >
-                Simpan Preferensi
-              </button>
-              <button
-                type="button"
-                onClick={() => setIsGlobalReminderOpen(false)}
-                className="w-full py-3.5 rounded-xl border border-gray-200 text-sm font-bold text-gray-400 hover:bg-gray-50 hover:text-gray-600 transition-colors"
-              >
-                Batal
-              </button>
-            </div>
-          </form>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs font-extrabold text-gray-600 mb-1.5 uppercase tracking-widest">Role yang dicari</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Backend Engineer"
+                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:ring-4 focus:ring-pink-100 focus:border-pink-500 focus:outline-none transition-all font-semibold"
+                    value={globalReminder.role}
+                    onChange={e => setGlobalReminder({ ...globalReminder, role: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-extrabold text-gray-600 mb-1.5 uppercase tracking-widest">Email Penerima</label>
+                  <input
+                    type="email"
+                    required
+                    placeholder="nama@email.com"
+                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:ring-4 focus:ring-pink-100 focus:border-pink-500 focus:outline-none transition-all font-semibold"
+                    value={globalReminder.email}
+                    onChange={e => setGlobalReminder({ ...globalReminder, email: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div className="mt-8 space-y-3">
+                <button
+                  type="submit"
+                  className="w-full py-3.5 rounded-xl bg-gradient-to-r from-pink-500 to-indigo-600 hover:from-pink-600 hover:to-indigo-700 text-white text-sm font-bold shadow-lg shadow-pink-500/20 active:scale-95 transition-all"
+                >
+                  Simpan Preferensi
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsGlobalReminderOpen(false)}
+                  className="w-full py-3.5 rounded-xl border border-gray-200 text-sm font-bold text-gray-400 hover:bg-gray-50 hover:text-gray-600 transition-colors"
+                >
+                  Batal
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
 
