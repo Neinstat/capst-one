@@ -8,7 +8,6 @@ const courseRoutes = require("./routes/courseRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const opportunityRoutes = require("./routes/opportunityRoutes");
 const plannerRoutes = require("./routes/plannerRoutes");
-const chatRoutes = require("./routes/chatRoutes");
 
 const app = express();
 
@@ -26,7 +25,6 @@ app.use("/api/courses", courseRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/opportunities", opportunityRoutes);
 app.use("/api/planner", plannerRoutes);
-app.use("/api/chat", chatRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
