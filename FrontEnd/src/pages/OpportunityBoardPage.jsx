@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuthStore } from "../store/authStore";
-import { checkIsAlumni } from "../lib/utils";
+import { checkIsAlumniOrAdmin } from "../lib/utils"; // Menggunakan fungsi utilitas baru berbasis role
 import {
   Briefcase,
   MapPin,
@@ -17,7 +17,9 @@ import {
 
 export default function OpportunityBoardPage() {
   const { user, token } = useAuthStore();
-  const isAlumni = checkIsAlumni(user?.nrp);
+
+  // Sinkronisasi hak akses tombol berdasarkan kolom role dari database Supabase
+  const isAlumni = checkIsAlumniOrAdmin(user?.role);
 
   // State Manajemen Data Dinamis dari Backend
   const [opportunities, setOpportunities] = useState([]);
@@ -92,7 +94,7 @@ export default function OpportunityBoardPage() {
     }
 
     try {
-      // Mengubah string tags (koma) menjadi array teks sesuai format database
+      // Mengubah string koma menjadi array teks sebelum dikirim ke PostgreSQL
       const processedTags = newJob.tags
         .split(",")
         .map((t) => t.trim())
@@ -137,7 +139,7 @@ export default function OpportunityBoardPage() {
           notes: "",
           apply_url: "",
         });
-        // Refresh daftar lowongan
+        // Refresh daftar lowongan agar data terbaru langsung ditarik dari database
         fetchOpportunities();
       } else {
         alert(result.message || "Gagal memposting lowongan.");
@@ -148,7 +150,7 @@ export default function OpportunityBoardPage() {
     }
   };
 
-  // Logika Filter & Search Klien
+  // Logika Filter & Search di Sisi Klien
   const filtered = opportunities.filter((o) => {
     const matchesSearch =
       o.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -409,7 +411,7 @@ export default function OpportunityBoardPage() {
         </div>
       )}
 
-      {/* Modal Posting Baru (Alumni Only) */}
+      {/* Modal Posting Baru (Alumni & Admin Only) */}
       {isPosting && (
         <div className="fixed inset-0 z-[200] overflow-y-auto">
           <div
@@ -428,7 +430,7 @@ export default function OpportunityBoardPage() {
                     Posting Lowongan Baru
                   </h2>
                   <p className="text-[11px] font-bold text-pink-500 uppercase tracking-wider mt-0.5">
-                    Kontribusi Alumni
+                    Kontribusi Akses Internal
                   </p>
                 </div>
                 <button
@@ -759,7 +761,7 @@ export default function OpportunityBoardPage() {
                 <button
                   type="button"
                   onClick={() => setIsGlobalReminderOpen(false)}
-                  className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-gray-700 border border-gray-200/50 hover:bg-gray-100 transition-colors"
+                  className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-gray-700 border border-gray-200/50 hover:bg-gray-100 transition-colors flex-shrink-0"
                 >
                   ✕
                 </button>
