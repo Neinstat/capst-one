@@ -1,15 +1,24 @@
-FROM python:3.11-slim
+FROM python:3.9-slim
 
 WORKDIR /app
 
+# Install dependensi sistem yang diperlukan
 RUN apt-get update && apt-get install -y \
     libgl1 \
     libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt .
-
-RUN pip install --no-cache-dir -r requirements.txt
+# Pastikan google-genai ada di dalam daftar instalasi langsung ini
+RUN pip install --no-cache-dir \
+    fastapi \
+    uvicorn \
+    python-multipart \
+    pypdf2 \
+    pdfplumber \
+    axios \
+    groq \
+    python-dotenv \
+    google-genai
 
 COPY . .
 
