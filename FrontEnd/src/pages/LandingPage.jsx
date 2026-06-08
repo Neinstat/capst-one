@@ -38,46 +38,82 @@ export default function LandingPage() {
   const navigate = useNavigate()
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-6xl mx-auto px-6 py-12">
-        <div className="flex items-start justify-between gap-6 flex-wrap">
+    <div
+      className="min-h-screen flex items-center justify-center p-6 relative overflow-hidden font-sans"
+      style={{
+        backgroundImage: "url('/dashboard_bg.png')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      {/* Dark overlay */}
+      <div className="absolute inset-0 bg-slate-950/70 backdrop-blur-[2px] pointer-events-none" />
+
+      <div className="max-w-6xl w-full mx-auto px-4 py-12 relative z-10">
+        
+        {/* Top Info Header */}
+        <div className="flex items-start justify-between gap-6 flex-wrap pb-8 border-b border-white/10">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-gray-200 text-xs font-medium text-gray-600">
-              <span className="w-2 h-2 rounded-full bg-gray-900" />
-              SPARK DTI
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md text-xs font-black text-rose-300 border border-white/10 uppercase tracking-widest">
+              <span className="w-2 h-2 rounded-full bg-rose-400 animate-pulse" />
+              SPARK DTI ITS
             </div>
-            <h1 className="text-3xl font-semibold text-gray-900 mt-4">Perencanaan Akademik & Rute Karir</h1>
-            <p className="text-gray-500 mt-2 max-w-2xl">
-              Pilih fitur yang ingin kamu coba. Beberapa fitur membutuhkan login (mode demo tetap bisa kamu lihat untuk UI).
+            <h1 className="text-4xl md:text-5xl font-black text-white mt-4 tracking-tight leading-none">
+              Perencanaan Akademik <br />
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-rose-400 to-indigo-400">& Rute Karir Digital</span>
+            </h1>
+            <p className="text-slate-400 mt-3 max-w-2xl text-sm font-semibold leading-relaxed">
+              Platform cerdas bertenaga AI untuk memetakan capaian akademik Anda, menavigasi konversi SKS, meninjau CV, serta merencanakan semester perkuliahan di Departemen Teknologi Informasi.
             </p>
           </div>
           <button
             onClick={() => navigate('/auth')}
-            className="px-4 py-2.5 rounded-xl bg-gray-900 text-white text-sm font-medium hover:bg-gray-800 transition-colors"
+            className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-rose-500 to-indigo-600 hover:from-rose-600 hover:to-indigo-700 text-white text-sm font-bold shadow-lg shadow-rose-500/25 transition-all hover:scale-105 active:scale-95 flex-shrink-0"
           >
-            Masuk
+            Masuk Ke Dashboard
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-10">
+        {/* Feature Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
           {FEATURES.map((f) => {
-            const c = FEATURE_COLORS[f.key]
+            const c = FEATURE_COLORS[f.key] || {
+              bg: "rgba(139, 92, 246, 0.1)",
+              border: "rgba(139, 92, 246, 0.2)",
+              accent: "#8b5cf6",
+              text: "#ffffff"
+            };
+
             return (
               <button
                 key={f.key}
                 onClick={() => navigate(f.path)}
-                className="text-left bg-white rounded-2xl border border-gray-200 p-6 hover:border-gray-300 transition-all"
+                className="text-left glass-card rounded-3xl p-6 hover:border-white/20 transition-all flex flex-col justify-between group h-64 border border-white/5 bg-slate-900/30 backdrop-blur-xl"
               >
-                <div className="flex items-center gap-3 mb-3">
-                  <span className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: c.bg }}>
-                    <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: c.accent }} />
-                  </span>
-                  <p className="text-sm font-semibold text-gray-900">{f.title}</p>
+                <div>
+                  <div className="flex items-center gap-3 mb-4">
+                    <span
+                      className="w-10 h-10 rounded-xl flex items-center justify-center border transition-all shadow-md group-hover:scale-105"
+                      style={{
+                        backgroundColor: c.accent + "20",
+                        borderColor: c.accent + "40",
+                        boxShadow: `0 4px 12px ${c.accent}15`
+                      }}
+                    >
+                      <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: c.accent }} />
+                    </span>
+                    <p className="text-base font-extrabold text-white group-hover:text-rose-300 transition-colors tracking-tight">{f.title}</p>
+                  </div>
+                  <p className="text-xs text-slate-400 font-semibold leading-relaxed">{f.desc}</p>
                 </div>
-                <p className="text-sm text-gray-500 leading-relaxed">{f.desc}</p>
-                <p className="text-xs font-semibold mt-4" style={{ color: c.text }}>
-                  Buka →
-                </p>
+                <div className="pt-4 flex items-center justify-between border-t border-white/5">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-slate-500 group-hover:text-white transition-colors">
+                    Pelajari Fitur
+                  </span>
+                  <span className="text-xs font-black transition-transform group-hover:translate-x-1" style={{ color: c.accent }}>
+                    Buka →
+                  </span>
+                </div>
               </button>
             )
           })}

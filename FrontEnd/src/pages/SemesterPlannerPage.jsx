@@ -7,6 +7,7 @@ import {
   BookOpen,
   AlertCircle,
   BarChart3,
+  FileText,
 } from "lucide-react";
 import PdfDropzone from "../components/shared/PdfDropzone";
 import { useAuthStore } from "../store/authStore";
@@ -42,14 +43,11 @@ export default function SemesterPlannerPage() {
   };
 
   const glowMap = {
-    amber: "ring-amber-400/60 shadow-amber-500/20",
-    blue: "ring-blue-400/60 shadow-blue-500/20",
-    violet: "ring-violet-400/60 shadow-violet-500/20",
+    amber: "ring-amber-500/50 shadow-amber-500/10 bg-slate-900/80 border-amber-500/30",
+    blue: "ring-blue-500/50 shadow-blue-500/10 bg-slate-900/80 border-blue-500/30",
+    violet: "ring-violet-500/50 shadow-violet-500/10 bg-slate-900/80 border-violet-500/30",
   };
 
-  // ========================================================
-  // LOGIKA UTAMA: MENGIRIM TRANSKRIP KE GERBANG BACKEND EXPRESS
-  // ========================================================
   async function handleGeneratePlan() {
     if (!file) return;
     if (!token) {
@@ -61,7 +59,6 @@ export default function SemesterPlannerPage() {
     setErrorMsg(null);
 
     const formData = new FormData();
-    // Key disesuaikan menjadi 'transcript' agar ditangkap oleh multer di Express
     formData.append("transcript", file);
 
     try {
@@ -76,12 +73,10 @@ export default function SemesterPlannerPage() {
       const result = await response.json();
 
       if (response.ok) {
-        // Express membungkus data sukses di dalam properti .data
         setPlannerData(result.data);
         setSelectedPlan("fast");
         setStep("result");
       } else {
-        // Menangkap error validasi dari Express (misal: SKS < 60)
         throw new Error(result.message || "Gagal memproses rencana semester.");
       }
     } catch (error) {
@@ -92,7 +87,7 @@ export default function SemesterPlannerPage() {
   }
 
   return (
-    <div className="p-6 max-w-5xl mx-auto space-y-8">
+    <div className="p-6 max-w-5xl mx-auto space-y-8 animate-scale-in">
       {/* Premium Hero Banner */}
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-950 via-slate-900 to-amber-950 text-white p-8 md:p-10 shadow-2xl border border-white/5">
         <div className="absolute -top-24 -right-24 w-72 h-72 bg-amber-500/20 rounded-full blur-[80px] pointer-events-none animate-pulse" />
@@ -131,13 +126,13 @@ export default function SemesterPlannerPage() {
 
       {/* Alert Error Component */}
       {errorMsg && (
-        <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-xl flex items-start gap-3 animate-scale-in">
-          <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
+        <div className="bg-red-950/40 backdrop-blur-md border border-red-500/20 p-4 rounded-xl flex items-start gap-3 animate-scale-in">
+          <AlertCircle className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" />
           <div>
-            <h3 className="text-sm font-bold text-red-800">
+            <h3 className="text-sm font-bold text-red-200">
               Proses Digagalkan
             </h3>
-            <p className="text-xs font-semibold text-red-600 mt-1">
+            <p className="text-xs font-semibold text-red-400 mt-1">
               {errorMsg}
             </p>
           </div>
@@ -146,11 +141,11 @@ export default function SemesterPlannerPage() {
 
       {/* Intro / Upload Step */}
       {step === "intro" && (
-        <div className="bg-white/80 backdrop-blur-md rounded-3xl border border-gray-100 p-7 max-w-lg shadow-sm">
-          <h2 className="text-xs font-extrabold text-gray-400 uppercase tracking-widest mb-1">
+        <div className="bg-slate-900/40 backdrop-blur-md rounded-3xl border border-white/5 p-7 max-w-lg shadow-2xl">
+          <h2 className="text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-1">
             Prasyarat & Ketentuan
           </h2>
-          <p className="text-xs font-semibold text-gray-500 mb-5 leading-relaxed">
+          <p className="text-xs font-semibold text-slate-300/80 mb-5 leading-relaxed">
             Sistem akan mengecek apakah kamu sudah memenuhi prasyarat untuk
             mendapat rekomendasi plan.
           </p>
@@ -162,22 +157,57 @@ export default function SemesterPlannerPage() {
             ].map((t) => (
               <li
                 key={t}
-                className="flex items-start gap-2.5 text-xs text-gray-700 font-semibold"
+                className="flex items-start gap-2.5 text-xs text-slate-300 font-semibold"
               >
-                <span className="w-4 h-4 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                <span className="w-4 h-4 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <div className="w-1.5 h-1.5 rounded-full bg-amber-400" />
                 </span>
                 {t}
               </li>
             ))}
           </ul>
 
-          <PdfDropzone onFile={setFile} label="Upload Transkrip PDF" />
+          {/* Area Dropzone Dinamis */}
+          {!file ? (
+            <PdfDropzone onFile={setFile} label="Upload Transkrip PDF" />
+          ) : (
+            /* Preview Status File Ter-upload (Sudah Di-dark-mode Total) */
+            <div className="p-4 rounded-xl flex items-center justify-between transition-all duration-300 border bg-slate-950/60 border-white/5 backdrop-blur-md shadow-lg">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-10 h-10 rounded-lg bg-rose-500/10 flex items-center justify-center border border-rose-500/20 flex-shrink-0">
+                  <FileText className="w-5 h-5 text-rose-400" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs font-bold text-slate-200 truncate pr-2">
+                    {file.name}
+                  </p>
+                  <p className="text-[10px] font-medium text-slate-400 mt-0.5">
+                    {file.size ? `${(file.size / 1024).toFixed(0)} KB` : "526 KB"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 flex-shrink-0">
+                <span className="text-[9px] font-extrabold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-md flex items-center gap-1 uppercase tracking-wider">
+                  ✓ Valid
+                </span>
+                <button
+                  onClick={() => setFile(null)}
+                  className="text-slate-400 hover:text-rose-400 p-1.5 rounded-lg hover:bg-white/5 transition-colors"
+                  title="Hapus file"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          )}
 
           {file && (
             <button
               onClick={handleGeneratePlan}
-              className="mt-5 w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white text-sm font-bold shadow-lg shadow-amber-500/20 hover:scale-[1.01] active:scale-95 transition-all flex items-center justify-center gap-2"
+              className="mt-5 w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white text-sm font-bold shadow-lg shadow-amber-500/25 hover:scale-[1.01] active:scale-95 transition-all flex items-center justify-center gap-2"
             >
               <CalendarCheck className="w-4 h-4" /> Generate Semester Plan
             </button>
@@ -187,12 +217,12 @@ export default function SemesterPlannerPage() {
 
       {/* Processing Step */}
       {step === "processing" && (
-        <div className="flex flex-col items-center justify-center py-20 bg-white/50 backdrop-blur-sm rounded-3xl border border-gray-100">
-          <Loader2 className="w-12 h-12 text-amber-500 animate-spin mb-4" />
-          <h3 className="text-lg font-bold text-gray-800">
+        <div className="flex flex-col items-center justify-center py-20 bg-slate-900/40 backdrop-blur-md rounded-3xl border border-white/5 shadow-2xl">
+          <Loader2 className="w-12 h-12 text-amber-400 animate-spin mb-4" />
+          <h3 className="text-lg font-bold text-slate-100">
             Menganalisis Transkrip...
           </h3>
-          <p className="text-sm font-semibold text-gray-500 mt-2 text-center max-w-sm">
+          <p className="text-sm font-semibold text-slate-400 mt-2 text-center max-w-sm px-4">
             AI sedang mengekstrak data PDF dan mencocokkannya dengan Kurikulum
             DTI. Harap tunggu sebentar.
           </p>
@@ -201,25 +231,25 @@ export default function SemesterPlannerPage() {
 
       {/* Result Step — Plan Cards & Schedule Table */}
       {step === "result" && plannerData && (
-        <div className="space-y-8">
+        <div className="space-y-8 animate-scale-in">
           {/* Progress SKS Bar Utama */}
-          <div className="bg-white rounded-2xl border border-gray-100 p-5 flex items-center justify-between shadow-sm">
+          <div className="bg-slate-900/40 backdrop-blur-md rounded-2xl border border-white/5 p-5 flex items-center justify-between shadow-2xl">
             <div>
-              <p className="text-xs font-bold text-gray-400 uppercase">
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-wide">
                 Progress Kelulusan
               </p>
-              <p className="text-lg font-black text-gray-800">
+              <p className="text-xl font-black text-slate-100 mt-1">
                 {plannerData.metadata.sks_completed}{" "}
-                <span className="text-sm font-semibold text-gray-500">
+                <span className="text-sm font-semibold text-slate-400">
                   / {plannerData.metadata.target_total_sks} SKS
                 </span>
               </p>
             </div>
             <div className="text-right">
-              <p className="text-xs font-bold text-gray-400 uppercase">
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-wide">
                 Total Sisa SKS
               </p>
-              <p className="text-lg font-black text-amber-600">
+              <p className="text-xl font-black text-amber-400 mt-1">
                 {plannerData.metadata.sks_needed} SKS
               </p>
             </div>
@@ -229,36 +259,36 @@ export default function SemesterPlannerPage() {
           {plannerData.metadata.distribusi_sks && (
             <div className="space-y-3">
               <div className="flex items-center gap-2 mb-2">
-                <BarChart3 className="w-4 h-4 text-gray-400" />
-                <h2 className="text-xs font-extrabold text-gray-500 uppercase tracking-widest">
+                <BarChart3 className="w-4 h-4 text-slate-400" />
+                <h2 className="text-xs font-extrabold text-slate-400 uppercase tracking-widest">
                   Matrik Kurikulum DTI
                 </h2>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* Card Wajib */}
-                <div className="p-4 border rounded-xl bg-blue-50/50 border-blue-100 flex flex-col justify-between hover:shadow-md transition-shadow">
+                <div className="p-5 border rounded-2xl bg-gradient-to-br from-blue-950/40 to-slate-900/40 border-blue-500/15 flex flex-col justify-between hover:border-blue-500/30 transition-all backdrop-blur-sm shadow-xl">
                   <div>
-                    <h4 className="text-[10px] font-bold text-blue-500 uppercase tracking-wider mb-1">
+                    <h4 className="text-[10px] font-bold text-blue-400 uppercase tracking-wider mb-2">
                       Kelompok MK Wajib
                     </h4>
-                    <p className="text-2xl font-black text-gray-800">
+                    <p className="text-2xl font-black text-slate-100">
                       103{" "}
-                      <span className="text-xs font-bold text-gray-400">
+                      <span className="text-xs font-bold text-slate-400 ml-1">
                         SKS Target
                       </span>
                     </p>
                   </div>
-                  <div className="mt-4 pt-3 border-t border-blue-100/50 flex justify-between text-xs font-semibold">
-                    <span className="text-gray-500">
+                  <div className="mt-5 pt-3 border-t border-white/5 flex justify-between text-xs font-semibold">
+                    <span className="text-slate-300">
                       Telah Diambil:{" "}
-                      <strong className="text-blue-700 ml-1">
+                      <strong className="text-blue-400 ml-1 font-bold">
                         {plannerData.metadata.distribusi_sks.wajib.diambil}
                       </strong>
                     </span>
-                    <span className="text-gray-500">
+                    <span className="text-slate-300">
                       Sisa:{" "}
-                      <strong className="text-red-500 ml-1">
+                      <strong className="text-rose-400 ml-1 font-bold">
                         {plannerData.metadata.distribusi_sks.wajib.sisa}
                       </strong>
                     </span>
@@ -266,28 +296,28 @@ export default function SemesterPlannerPage() {
                 </div>
 
                 {/* Card WUN */}
-                <div className="p-4 border rounded-xl bg-emerald-50/50 border-emerald-100 flex flex-col justify-between hover:shadow-md transition-shadow">
+                <div className="p-5 border rounded-2xl bg-gradient-to-br from-emerald-950/40 to-slate-900/40 border-emerald-500/15 flex flex-col justify-between hover:border-emerald-500/30 transition-all backdrop-blur-sm shadow-xl">
                   <div>
-                    <h4 className="text-[10px] font-bold text-emerald-500 uppercase tracking-wider mb-1">
+                    <h4 className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider mb-2">
                       Kelompok MK WUN
                     </h4>
-                    <p className="text-2xl font-black text-gray-800">
+                    <p className="text-2xl font-black text-slate-100">
                       26{" "}
-                      <span className="text-xs font-bold text-gray-400">
+                      <span className="text-xs font-bold text-slate-400 ml-1">
                         SKS Target
                       </span>
                     </p>
                   </div>
-                  <div className="mt-4 pt-3 border-t border-emerald-100/50 flex justify-between text-xs font-semibold">
-                    <span className="text-gray-500">
+                  <div className="mt-5 pt-3 border-t border-white/5 flex justify-between text-xs font-semibold">
+                    <span className="text-slate-300">
                       Telah Diambil:{" "}
-                      <strong className="text-emerald-700 ml-1">
+                      <strong className="text-emerald-400 ml-1 font-bold">
                         {plannerData.metadata.distribusi_sks.wun.diambil}
                       </strong>
                     </span>
-                    <span className="text-gray-500">
+                    <span className="text-slate-300">
                       Sisa:{" "}
-                      <strong className="text-red-500 ml-1">
+                      <strong className="text-rose-400 ml-1 font-bold">
                         {plannerData.metadata.distribusi_sks.wun.sisa}
                       </strong>
                     </span>
@@ -295,28 +325,28 @@ export default function SemesterPlannerPage() {
                 </div>
 
                 {/* Card Pilihan */}
-                <div className="p-4 border rounded-xl bg-purple-50/50 border-purple-100 flex flex-col justify-between hover:shadow-md transition-shadow">
+                <div className="p-5 border rounded-2xl bg-gradient-to-br from-purple-950/40 to-slate-900/40 border-purple-500/15 flex flex-col justify-between hover:border-purple-500/30 transition-all backdrop-blur-sm shadow-xl">
                   <div>
-                    <h4 className="text-[10px] font-bold text-purple-500 uppercase tracking-wider mb-1">
+                    <h4 className="text-[10px] font-bold text-purple-400 uppercase tracking-wider mb-2">
                       Kelompok MK Pilihan
                     </h4>
-                    <p className="text-2xl font-black text-gray-800">
+                    <p className="text-2xl font-black text-slate-100">
                       15{" "}
-                      <span className="text-xs font-bold text-gray-400">
+                      <span className="text-xs font-bold text-slate-400 ml-1">
                         SKS Target
                       </span>
                     </p>
                   </div>
-                  <div className="mt-4 pt-3 border-t border-purple-100/50 flex justify-between text-xs font-semibold">
-                    <span className="text-gray-500">
+                  <div className="mt-5 pt-3 border-t border-white/5 flex justify-between text-xs font-semibold">
+                    <span className="text-slate-300">
                       Telah Diambil:{" "}
-                      <strong className="text-purple-700 ml-1">
+                      <strong className="text-purple-400 ml-1 font-bold">
                         {plannerData.metadata.distribusi_sks.pilihan.diambil}
                       </strong>
                     </span>
-                    <span className="text-gray-500">
+                    <span className="text-slate-300">
                       Sisa:{" "}
-                      <strong className="text-red-500 ml-1">
+                      <strong className="text-rose-400 ml-1 font-bold">
                         {plannerData.metadata.distribusi_sks.pilihan.sisa}
                       </strong>
                     </span>
@@ -327,10 +357,10 @@ export default function SemesterPlannerPage() {
           )}
 
           <div className="flex items-center gap-2 pt-4">
-            <h2 className="text-xs font-extrabold text-gray-400 uppercase tracking-widest">
+            <h2 className="text-xs font-extrabold text-slate-400 uppercase tracking-widest">
               Pilih Plan Semester Kamu
             </h2>
-            <div className="flex-1 h-px bg-gray-100" />
+            <div className="flex-1 h-px bg-white/5" />
           </div>
 
           {/* Dynamic Plan Cards */}
@@ -342,15 +372,14 @@ export default function SemesterPlannerPage() {
                 <button
                   key={planKey}
                   onClick={() => setSelectedPlan(planKey)}
-                  className={`group relative text-left bg-white rounded-3xl border-2 p-6 transition-all duration-300 hover:-translate-y-1 ${
-                    isSelected
-                      ? `border-transparent ring-2 shadow-xl ${glowMap[uiConfig.glowColor]}`
-                      : "border-gray-100 hover:border-gray-200 hover:shadow-md"
-                  }`}
+                  className={`group relative text-left bg-slate-900/40 border backdrop-blur-md rounded-3xl p-6 transition-all duration-300 hover:-translate-y-1 ${isSelected
+                    ? `border-transparent ring-2 shadow-2xl ${glowMap[uiConfig.glowColor]}`
+                    : "border-white/5 hover:border-white/10 hover:bg-slate-900/60 hover:shadow-xl"
+                    }`}
                 >
                   {isSelected && (
                     <div className="absolute top-4 right-4">
-                      <CheckCircle className="w-5 h-5 text-emerald-500" />
+                      <CheckCircle className="w-5 h-5 text-emerald-400" />
                     </div>
                   )}
 
@@ -360,10 +389,10 @@ export default function SemesterPlannerPage() {
                     {uiConfig.badge}
                   </div>
 
-                  <h3 className="text-sm font-extrabold text-gray-900 leading-snug mb-2">
+                  <h3 className="text-sm font-extrabold text-slate-100 leading-snug mb-2">
                     {plan.title}
                   </h3>
-                  <p className="text-[11px] font-semibold text-gray-500 mb-4 leading-relaxed">
+                  <p className="text-[11px] font-semibold text-slate-400 mb-4 leading-relaxed">
                     {plan.desc}
                   </p>
                 </button>
@@ -372,12 +401,12 @@ export default function SemesterPlannerPage() {
           </div>
 
           {/* Schedule Detail Section */}
-          <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
-            <div className="bg-slate-50 border-b border-gray-100 px-6 py-4 flex items-center gap-3">
-              <BookOpen className="w-5 h-5 text-indigo-500" />
-              <h3 className="text-sm font-bold text-gray-800">
+          <div className="bg-slate-900/30 backdrop-blur-md rounded-3xl border border-white/5 shadow-2xl overflow-hidden">
+            <div className="bg-slate-950/40 border-b border-white/5 px-6 py-4 flex items-center gap-3">
+              <BookOpen className="w-5 h-5 text-indigo-400" />
+              <h3 className="text-sm font-bold text-slate-200">
                 Rincian Jadwal:{" "}
-                <span className="text-indigo-600">
+                <span className="text-indigo-400 ml-1">
                   {plannerData.plans[selectedPlan].title}
                 </span>
               </h3>
@@ -387,34 +416,34 @@ export default function SemesterPlannerPage() {
               {plannerData.plans[selectedPlan].schedule.map((semester, idx) => (
                 <div
                   key={idx}
-                  className="border border-gray-100 rounded-2xl overflow-hidden"
+                  className="border border-white/5 bg-slate-950/20 rounded-2xl overflow-hidden"
                 >
-                  <div className="bg-gray-50/50 px-4 py-3 border-b border-gray-100 flex justify-between items-center">
+                  <div className="bg-slate-950/40 px-4 py-3 border-b border-white/5 flex justify-between items-center">
                     <div>
-                      <h4 className="text-xs font-black text-gray-800 uppercase">
+                      <h4 className="text-xs font-black text-slate-200 uppercase tracking-wide">
                         {semester.periode}
                       </h4>
-                      <p className="text-[10px] font-bold text-gray-500 mt-0.5">
+                      <p className="text-[10px] font-bold text-slate-400 mt-0.5">
                         {semester.fokus}
                       </p>
                     </div>
-                    <span className="text-xs font-bold px-2.5 py-1 bg-white border border-gray-200 rounded-lg text-gray-600 shadow-sm">
+                    <span className="text-xs font-bold px-2.5 py-1 bg-slate-900 border border-white/5 rounded-lg text-slate-300 shadow-sm">
                       Maks {semester.max_sks} SKS
                     </span>
                   </div>
 
-                  <ul className="divide-y divide-gray-50">
+                  <ul className="divide-y divide-white/5">
                     {semester.courses.length > 0 ? (
                       semester.courses.map((course, cIdx) => (
                         <li
                           key={cIdx}
-                          className="px-4 py-3 flex justify-between items-center hover:bg-slate-50 transition-colors"
+                          className="px-4 py-3 flex justify-between items-center hover:bg-white/5 transition-colors"
                         >
                           <div className="flex flex-col">
-                            <span className="text-[10px] font-bold text-gray-400 mb-0.5">
+                            <span className="text-[10px] font-bold text-slate-500 mb-0.5 font-mono">
                               {course.kode}
                             </span>
-                            <span className="text-xs font-bold text-gray-700">
+                            <span className="text-xs font-bold text-slate-200">
                               {course.nama}
                             </span>
                             <span className="text-[10px] font-medium text-slate-400 mt-0.5 italic">
@@ -423,18 +452,23 @@ export default function SemesterPlannerPage() {
                           </div>
                           <div className="flex items-center gap-3">
                             <span
-                              className={`text-[9px] font-extrabold uppercase px-2 py-0.5 rounded ${course.tipe === "Wajib" ? "bg-blue-50 text-blue-600" : course.tipe === "Agama" || course.kode.startsWith("UG") ? "bg-emerald-50 text-emerald-600" : "bg-purple-50 text-purple-600"}`}
+                              className={`text-[9px] font-extrabold uppercase px-2 py-0.5 rounded ${course.tipe === "Wajib"
+                                ? "bg-blue-500/10 border border-blue-500/20 text-blue-400"
+                                : course.tipe === "Agama" || course.kode.startsWith("UG")
+                                  ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-400"
+                                  : "bg-purple-500/10 border border-purple-500/20 text-purple-400"
+                                }`}
                             >
                               {course.tipe}
                             </span>
-                            <span className="text-xs font-black text-gray-800 w-12 text-right">
+                            <span className="text-xs font-black text-slate-100 w-12 text-right">
                               {course.sks} SKS
                             </span>
                           </div>
                         </li>
                       ))
                     ) : (
-                      <li className="px-4 py-6 text-center text-xs font-bold text-gray-400">
+                      <li className="px-4 py-6 text-center text-xs font-bold text-slate-500">
                         Tidak ada jadwal kelas teori
                       </li>
                     )}
@@ -445,6 +479,17 @@ export default function SemesterPlannerPage() {
           </div>
         </div>
       )}
+
+      {/* Animations */}
+      <style>{`
+        @keyframes scaleIn {
+          from { transform: scale(0.97); opacity: 0; }
+          to { transform: scale(1); opacity: 1; }
+        }
+        .animate-scale-in {
+          animation: scaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+      `}</style>
     </div>
   );
 }
