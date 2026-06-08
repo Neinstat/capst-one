@@ -84,7 +84,7 @@ export default function SksChatbotPage() {
   }
 
   return (
-    <div className="p-6 max-w-5xl mx-auto space-y-8">
+    <div className="p-6 max-w-5xl mx-auto space-y-8 animate-scale-in">
       {/* Premium Hero Banner */}
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-950 via-slate-900 to-rose-950 text-white p-8 md:p-10 shadow-2xl border border-white/5">
         <div className="absolute -top-24 -right-24 w-72 h-72 bg-rose-500/20 rounded-full blur-[80px] pointer-events-none animate-pulse" />
@@ -113,7 +113,7 @@ export default function SksChatbotPage() {
                 setSubJalur(null);
                 setMessages([]);
               }}
-              className="flex items-center gap-2 px-6 py-4 bg-white/10 backdrop-blur-md hover:bg-white/20 text-white rounded-2xl text-sm font-bold border border-white/20 hover:scale-[1.02] active:scale-95 transition-all flex-shrink-0"
+              className="flex items-center gap-2 px-6 py-4 bg-white/10 backdrop-blur-md hover:bg-white/20 text-white rounded-2xl text-sm font-bold border border-white/20 hover:scale-[1.02] active:scale-95 transition-all flex-shrink-0 shadow-xl"
             >
               <ArrowLeft className="w-4 h-4" /> Ganti Jalur
             </button>
@@ -123,8 +123,8 @@ export default function SksChatbotPage() {
 
       {/* Jalur Selection Step */}
       {step === "jalur" && (
-        <div className="bg-white/80 backdrop-blur-md rounded-3xl border border-gray-100 p-7 max-w-lg shadow-sm">
-          <h2 className="text-xs font-extrabold text-gray-400 uppercase tracking-widest mb-5">
+        <div className="bg-slate-900/40 backdrop-blur-md rounded-3xl border border-white/5 p-7 max-w-lg shadow-2xl animate-scale-in">
+          <h2 className="text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-5">
             Pilih Jalur Konversi
           </h2>
           <div className="space-y-3">
@@ -137,20 +137,19 @@ export default function SksChatbotPage() {
                     setJalur(j);
                     setSubJalur(null);
                   }}
-                  className={`w-full flex items-start gap-3 p-4 rounded-2xl border-2 text-left transition-all duration-200 ${
-                    isSelected
-                      ? "border-rose-400/60 bg-rose-50/50 shadow-md shadow-rose-500/10"
-                      : "border-gray-100 hover:border-gray-200 bg-white hover:bg-gray-50/50"
-                  }`}
+                  className={`w-full flex items-start gap-3 p-4 rounded-2xl border-2 text-left transition-all duration-200 ${isSelected
+                      ? "border-rose-500/40 bg-rose-950/20 shadow-lg shadow-rose-500/5"
+                      : "border-white/5 bg-slate-950/40 hover:bg-slate-900/40 hover:border-white/10"
+                    }`}
                 >
                   <div
-                    className={`w-2.5 h-2.5 rounded-full mt-1.5 flex-shrink-0 transition-colors ${isSelected ? "bg-rose-500" : "bg-gray-300"}`}
+                    className={`w-2.5 h-2.5 rounded-full mt-1.5 flex-shrink-0 transition-colors ${isSelected ? "bg-rose-400" : "bg-slate-700"}`}
                   />
                   <div className="flex-1">
-                    <p className="text-sm font-extrabold text-gray-900">
+                    <p className="text-sm font-extrabold text-slate-200">
                       {j.label}
                     </p>
-                    <p className="text-xs font-semibold text-gray-500 mt-0.5 leading-relaxed">
+                    <p className="text-xs font-semibold text-slate-400 mt-0.5 leading-relaxed">
                       {j.description}
                     </p>
 
@@ -163,11 +162,10 @@ export default function SksChatbotPage() {
                               e.stopPropagation();
                               setSubJalur(s);
                             }}
-                            className={`text-[11px] px-3 py-1.5 rounded-xl border font-bold transition-all ${
-                              subJalur === s
-                                ? "bg-rose-500 border-rose-500 text-white shadow-sm shadow-rose-500/20"
-                                : "border-gray-200 text-gray-600 bg-white hover:border-rose-300 hover:text-rose-600"
-                            }`}
+                            className={`text-[11px] px-3 py-1.5 rounded-xl border font-bold transition-all ${subJalur === s
+                                ? "bg-rose-500 border-rose-500 text-white shadow-md shadow-rose-500/20"
+                                : "border-white/10 text-slate-300 bg-slate-900 hover:border-rose-500/40 hover:text-rose-400"
+                              }`}
                           >
                             {s}
                           </button>
@@ -200,23 +198,23 @@ export default function SksChatbotPage() {
 
       {/* Chat Step */}
       {step === "chat" && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-scale-in">
           {/* Conversion Reference Table */}
           <div className="lg:col-span-1">
-            <div className="bg-white/80 backdrop-blur-md rounded-3xl border border-gray-100 p-6 shadow-sm sticky top-6">
-              <h3 className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-4">
+            <div className="bg-slate-900/40 backdrop-blur-md rounded-3xl border border-white/5 p-6 shadow-2xl sticky top-6">
+              <h3 className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-4">
                 Tabel Konversi Resmi DTI
               </h3>
               <div className="space-y-0">
                 {CONVERSION_TABLE.map(({ type, sks }) => (
                   <div
                     key={type}
-                    className="flex items-start justify-between py-3 border-b border-gray-50 last:border-0 gap-3"
+                    className="flex items-start justify-between py-3 border-b border-white/5 last:border-0 gap-3"
                   >
-                    <p className="text-xs text-gray-600 font-semibold leading-snug">
+                    <p className="text-xs text-slate-300 font-semibold leading-snug">
                       {type}
                     </p>
-                    <span className="text-[11px] font-extrabold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-lg border border-rose-100/60 flex-shrink-0">
+                    <span className="text-[11px] font-extrabold text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded-lg border border-rose-500/20 flex-shrink-0">
                       {sks}
                     </span>
                   </div>
@@ -224,15 +222,15 @@ export default function SksChatbotPage() {
               </div>
 
               {/* Active Context */}
-              <div className="mt-4 pt-4 border-t border-gray-100">
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
+              <div className="mt-4 pt-4 border-t border-white/5">
+                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">
                   Konteks Aktif
                 </p>
                 <div className="flex flex-wrap gap-1.5">
-                  <span className="text-[10px] font-bold px-2 py-1 rounded-lg bg-rose-50 text-rose-700 border border-rose-100/60">
+                  <span className="text-[10px] font-bold px-2 py-1 rounded-lg bg-rose-500/10 text-rose-400 border border-rose-500/20">
                     {jalur?.label}
                   </span>
-                  <span className="text-[10px] font-bold px-2 py-1 rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-100/60">
+                  <span className="text-[10px] font-bold px-2 py-1 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
                     {subJalur}
                   </span>
                 </div>
@@ -242,25 +240,25 @@ export default function SksChatbotPage() {
 
           {/* Chat Interface */}
           <div
-            className="lg:col-span-2 flex flex-col bg-white/80 backdrop-blur-md rounded-3xl border border-gray-100 shadow-sm overflow-hidden"
+            className="lg:col-span-2 flex flex-col bg-slate-900/40 backdrop-blur-md rounded-3xl border border-white/5 shadow-2xl overflow-hidden"
             style={{ minHeight: 520 }}
           >
             {/* Chat Header */}
-            <div className="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center shadow-sm">
+            <div className="px-6 py-4 border-b border-white/5 flex items-center gap-3">
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center shadow-md">
                 <Bot className="w-4 h-4 text-white" />
               </div>
               <div>
-                <p className="text-xs font-extrabold text-gray-900">
+                <p className="text-xs font-extrabold text-slate-200">
                   MBKM AI Agent
                 </p>
-                <p className="text-[10px] font-semibold text-gray-400">
+                <p className="text-[10px] font-semibold text-slate-500">
                   {jalur?.label} · {subJalur}
                 </p>
               </div>
               <div className="ml-auto flex items-center gap-1.5">
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="text-[10px] font-bold text-emerald-600">
+                <span className="text-[10px] font-bold text-emerald-400">
                   Online
                 </span>
               </div>
@@ -274,22 +272,21 @@ export default function SksChatbotPage() {
                   className={`flex items-end gap-2.5 ${msg.role === "user" ? "justify-end" : "justify-start"}`}
                 >
                   {msg.role === "bot" && (
-                    <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center flex-shrink-0 shadow-sm mb-0.5">
+                    <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center flex-shrink-0 shadow-md mb-0.5">
                       <Bot className="w-3.5 h-3.5 text-white" />
                     </div>
                   )}
                   <div
-                    className={`max-w-[75%] px-4 py-3 rounded-2xl text-xs leading-relaxed font-semibold ${
-                      msg.role === "user"
-                        ? "bg-gradient-to-br from-rose-500 to-pink-600 text-white rounded-br-sm shadow-md shadow-rose-500/20"
-                        : "bg-gray-100/80 text-gray-800 rounded-bl-sm"
-                    }`}
+                    className={`max-w-[75%] px-4 py-3 rounded-2xl text-xs leading-relaxed font-semibold ${msg.role === "user"
+                        ? "bg-gradient-to-br from-rose-500 to-pink-600 text-white rounded-br-sm shadow-lg shadow-rose-500/10"
+                        : "bg-slate-800/60 text-slate-200 rounded-bl-sm border border-white/5"
+                      }`}
                   >
                     {msg.text}
                   </div>
                   {msg.role === "user" && (
-                    <div className="w-7 h-7 rounded-xl bg-gray-100 flex items-center justify-center flex-shrink-0 mb-0.5">
-                      <User className="w-3.5 h-3.5 text-gray-500" />
+                    <div className="w-7 h-7 rounded-xl bg-slate-800 border border-white/5 flex items-center justify-center flex-shrink-0 mb-0.5">
+                      <User className="w-3.5 h-3.5 text-slate-400" />
                     </div>
                   )}
                 </div>
@@ -298,20 +295,20 @@ export default function SksChatbotPage() {
               {/* Loading indicator */}
               {loading && (
                 <div className="flex items-end gap-2.5 justify-start">
-                  <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center flex-shrink-0 shadow-sm">
+                  <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center flex-shrink-0 shadow-md">
                     <Bot className="w-3.5 h-3.5 text-white" />
                   </div>
-                  <div className="bg-gray-100/80 rounded-2xl rounded-bl-sm px-4 py-3 flex items-center gap-1.5">
+                  <div className="bg-slate-800/60 rounded-2xl rounded-bl-sm px-4 py-3 border border-white/5 flex items-center gap-1.5">
                     <div
-                      className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce"
+                      className="w-1.5 h-1.5 rounded-full bg-slate-500 animate-bounce"
                       style={{ animationDelay: "0ms" }}
                     />
                     <div
-                      className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce"
+                      className="w-1.5 h-1.5 rounded-full bg-slate-500 animate-bounce"
                       style={{ animationDelay: "150ms" }}
                     />
                     <div
-                      className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce"
+                      className="w-1.5 h-1.5 rounded-full bg-slate-500 animate-bounce"
                       style={{ animationDelay: "300ms" }}
                     />
                   </div>
@@ -321,7 +318,7 @@ export default function SksChatbotPage() {
             </div>
 
             {/* Input Bar */}
-            <div className="px-5 py-4 border-t border-gray-100 flex gap-3">
+            <div className="px-5 py-4 border-t border-white/5 flex gap-3 bg-slate-950/20">
               <input
                 type="text"
                 value={input}
@@ -329,12 +326,12 @@ export default function SksChatbotPage() {
                 onKeyDown={(e) => e.key === "Enter" && !loading && handleSend()}
                 placeholder="Ketik detail kegiatan MBKM kamu..."
                 disabled={loading}
-                className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:ring-4 focus:ring-rose-100 focus:border-rose-400 focus:outline-none transition-all font-semibold disabled:bg-gray-50 disabled:text-gray-400"
+                className="flex-1 px-4 py-2.5 rounded-xl bg-slate-950 border border-white/5 text-sm text-slate-100 placeholder-slate-600 focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500 focus:outline-none transition-all font-semibold disabled:bg-slate-900 disabled:text-slate-500"
               />
               <button
                 onClick={handleSend}
                 disabled={loading || !input.trim()}
-                className="w-11 h-11 rounded-xl bg-gradient-to-br from-rose-500 to-pink-600 text-white flex items-center justify-center shadow-md shadow-rose-500/20 hover:scale-105 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none flex-shrink-0"
+                className="w-11 h-11 rounded-xl bg-gradient-to-br from-rose-500 to-pink-600 text-white flex items-center justify-center shadow-lg shadow-rose-500/20 hover:scale-105 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none flex-shrink-0"
               >
                 <Send className="w-4 h-4" />
               </button>

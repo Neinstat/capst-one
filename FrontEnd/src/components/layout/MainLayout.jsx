@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Outlet, NavLink, useNavigate, Link } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
 import { useUIStore } from "../../store/authStore";
@@ -38,7 +39,6 @@ const BASE_NAV_ITEMS = [
 ];
 
 export default function MainLayout() {
-  // Menggunakan Selector Fungsi Murni agar React mendeteksi perubahan state di localStorage secara reactive
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
   const sidebarOpen = useUIStore((state) => state.sidebarOpen);
@@ -47,18 +47,21 @@ export default function MainLayout() {
   const navigate = useNavigate();
   const isAlumni = checkIsAlumniOrAdmin(user?.role);
 
+  // State untuk Dropdown Profile di Header
+  const [profileOpen, setProfileOpen] = useState(false);
+
   // 2. LOGIKA SIDEBAR DINAMIS: Menyuntikkan Menu Admin Panel jika role terdeteksi sebagai admin
   const allowedNavItems =
     user?.role === "admin"
       ? [
-          ...BASE_NAV_ITEMS,
-          {
-            path: "/admin-panel",
-            key: "admin-panel", // Key unik untuk pemetaan warna fallback admin
-            icon: ShieldIcon,
-            label: "Admin Panel",
-          },
-        ]
+        ...BASE_NAV_ITEMS,
+        {
+          path: "/admin-panel",
+          key: "admin-panel",
+          icon: ShieldIcon,
+          label: "Admin Panel",
+        },
+      ]
       : BASE_NAV_ITEMS;
 
   function handleLogout() {
@@ -66,172 +69,199 @@ export default function MainLayout() {
     navigate("/auth");
   }
 
+  {/* Background iamge */ }
+
   return (
-    <div className="flex h-screen bg-gray-50 font-sans overflow-hidden">
-      {/* Sidebar */}
-      <aside
-        className={`
-          flex flex-col bg-white border-r border-gray-200
-          transition-all duration-300 ease-in-out
-          ${sidebarOpen ? "w-64" : "w-16"}
-        `}
-      >
-        {/* Logo */}
-        <div className="flex items-center gap-3 px-4 py-5 border-b border-gray-100">
-          <div className="w-8 h-8 rounded-lg bg-gray-900 flex items-center justify-center flex-shrink-0">
-            <span className="text-white text-xs font-bold">SD</span>
+    <div
+      className="min-h-screen bg-slate-950 flex items-center justify-center p-4 md:p-6 relative overflow-hidden dashboard-theme text-slate-100"
+      style={{
+        backgroundImage: "url('/616+Vkii5SL.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      {/* Deep Dark Color Layer for Atmospheric Look */}
+      <div className="absolute inset-0 bg-slate-950/50 backdrop-blur-[3px] pointer-events-none" />
+
+      {/* Main Glassmorphic Wrapper */}
+      <div className="w-full max-w-7xl h-[92vh] rounded-[2.5rem] border border-white/10 glass-panel flex overflow-hidden shadow-2xl relative z-10 font-sans">
+
+        {/* Left Sidebar */}
+        <aside
+          className={`
+            flex flex-col border-r border-white/5 bg-slate-950/45 backdrop-blur-2xl
+            transition-all duration-300 ease-in-out select-none
+            ${sidebarOpen ? "w-72 p-5" : "w-20 p-4"}
+          `}
+        >
+          {/* Bagian Atas Sidebar */}
+          <div className={`flex items-center mb-6 ${sidebarOpen ? "justify-between px-2" : "justify-center"}`}>
+            {sidebarOpen ? (
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-lg bg-gradient-to-tr from-rose-500 to-indigo-600 flex items-center justify-center text-[10px] font-black text-white shadow-md">
+                  SP
+                </div>
+                <span className="text-xs font-black text-slate-200 tracking-wider uppercase">
+                  Spark Menu
+                </span>
+              </div>
+            ) : null}
+            <button
+              onClick={toggleSidebar}
+              className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all"
+              title={sidebarOpen ? "Perkecil Sidebar" : "Perbesar Sidebar"}
+            >
+              <MenuIcon className="w-4 h-4" />
+            </button>
           </div>
-          {sidebarOpen && (
+
+          {/* Nav List */}
+          <div className="flex-1 overflow-y-auto space-y-5 pr-1 clean-scrollbar">
             <div>
-              <p className="text-sm font-semibold text-gray-900 leading-tight">
-                SPARK DTI
-              </p>
-              <p className="text-xs text-gray-500">ITS Surabaya</p>
-            </div>
-          )}
-        </div>
+              {sidebarOpen && (
+                <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-3 px-2">
+                  Layanan DTI
+                </p>
+              )}
+              <nav className="space-y-1">
+                {allowedNavItems.map(({ path, key, icon: Icon, label }) => {
+                  const colors = FEATURE_COLORS[key] || {
+                    bg: "rgba(139, 92, 246, 0.1)",
+                    border: "rgba(139, 92, 246, 0.2)",
+                    accent: "#8b5cf6",
+                    text: "#ffffff",
+                  };
 
-        {/* Nav */}
-        <nav className="flex-1 py-4 space-y-1 px-2 overflow-y-auto">
-          {allowedNavItems.map(({ path, key, icon: Icon, label }) => {
-            // Mekanisme Fallback Object Warna Khusus Admin Panel
-            const colors = FEATURE_COLORS[key] || {
-              bg: "#f8fafc", // slate-50
-              border: "#e2e8f0", // slate-200
-              accent: "#0f172a", // slate-900
-              text: "#1e293b", // slate-800
-            };
-
-            return (
-              <NavLink
-                key={path}
-                to={path}
-                className={({ isActive }) =>
-                  `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all
-                  ${
-                    isActive
-                      ? "text-gray-900 font-medium"
-                      : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-                  }`
-                }
-                style={({ isActive }) =>
-                  isActive
-                    ? { backgroundColor: colors.bg, color: colors.text }
-                    : {}
-                }
-              >
-                {({ isActive }) => (
-                  <>
-                    <span
-                      className="w-8 h-8 rounded-md flex items-center justify-center flex-shrink-0"
-                      style={isActive ? { backgroundColor: colors.accent } : {}}
+                  return (
+                    <NavLink
+                      key={path}
+                      to={path}
+                      className={({ isActive }) =>
+                        `flex items-center gap-3 px-2.5 py-2 rounded-xl transition-all duration-200 group
+                        ${isActive
+                          ? "bg-white/10 text-white shadow-sm border border-white/5"
+                          : "text-slate-400 hover:text-white hover:bg-white/5"
+                        }`
+                      }
                     >
-                      <Icon
-                        className="w-4 h-4"
-                        style={{ color: isActive ? "white" : colors.accent }}
-                      />
-                    </span>
-                    {sidebarOpen && <span className="truncate">{label}</span>}
+                      {({ isActive }) => (
+                        <>
+                          {/* Book Cover Design */}
+                          <span
+                            className="w-8 h-10 rounded-lg flex items-center justify-center flex-shrink-0 shadow-lg border transition-transform group-hover:scale-105"
+                            style={{
+                              backgroundColor: colors.accent,
+                              borderColor: colors.border,
+                              boxShadow: `0 4px 12px ${colors.accent}30`,
+                            }}
+                          >
+                            <Icon className="w-4 h-4 text-white font-bold" />
+                          </span>
+                          {sidebarOpen && (
+                            <span className="text-xs font-bold truncate tracking-wide">
+                              {label}
+                            </span>
+                          )}
+                        </>
+                      )}
+                    </NavLink>
+                  );
+                })}
+              </nav>
+            </div>
+          </div>
+
+          {/* Bottom: Logout */}
+          <div className="border-t border-white/5 pt-4 mt-2">
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-all text-xs font-bold text-left"
+            >
+              <LogoutIcon className="w-4 h-4" />
+              {sidebarOpen && <span>Keluar</span>}
+            </button>
+          </div>
+        </aside>
+
+        {/* Center Content and Header */}
+        <div className="flex-1 flex flex-col overflow-hidden bg-slate-900/15">
+          {/* Header Top Bar */}
+          <header className="border-b border-white/5 px-6 py-4 flex items-center justify-between bg-slate-950/20 backdrop-blur-md relative z-30">
+            <div className="flex items-center gap-3">
+              <span className="text-[10px] font-black uppercase tracking-wider text-rose-500/90 bg-rose-500/10 border border-rose-500/20 px-2.5 py-1 rounded-lg">
+                SPARK DTI ITS
+              </span>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <span className="text-xs font-bold text-slate-400 hidden sm:inline">
+                NRP: <span className="font-mono text-white">{user?.nrp ?? "5027231000"}</span>
+              </span>
+
+              {/* Avatar Pemicu Dropdown Profile */}
+              <div className="relative">
+                <button
+                  onClick={() => setProfileOpen(!profileOpen)}
+                  className="flex items-center gap-2 focus:outline-none p-1 rounded-xl hover:bg-white/5 transition-all"
+                  title="Menu Profil"
+                >
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-rose-500 to-indigo-600 flex items-center justify-center text-xs font-black text-white shadow-md border border-white/10">
+                    {user?.nama ? user.nama.charAt(0).toUpperCase() : "M"}
+                  </div>
+                </button>
+
+                {/* Dropdown Menu Box */}
+                {profileOpen && (
+                  <>
+                    <div
+                      className="fixed inset-0 z-40 cursor-default"
+                      onClick={() => setProfileOpen(false)}
+                    />
+
+                    <div className="absolute right-0 mt-2 w-56 bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-2xl p-2.5 shadow-2xl z-50 animate-scale-in">
+                      <div className="px-3 py-2 border-b border-white/5 mb-1.5">
+                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Akun Pengguna</p>
+                        <p className="text-xs font-extrabold text-slate-200 truncate mt-0.5">{user?.nama ?? "Mahasiswa IT"}</p>
+                        <p className="text-[9px] font-medium text-slate-400 mt-0.5 truncate">{user?.role ?? "Civitas Aktif"}</p>
+                      </div>
+
+                      <button
+                        onClick={() => {
+                          setProfileOpen(false);
+                          navigate("/profile");
+                        }}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-slate-300 hover:text-white hover:bg-white/5 text-left transition-colors"
+                      >
+                        <svg className="w-4 h-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        Informasi & Password
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          setProfileOpen(false);
+                          handleLogout();
+                        }}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 text-left transition-colors"
+                      >
+                        <LogoutIcon className="w-4 h-4" />
+                        Keluar Sesi
+                      </button>
+                    </div>
                   </>
                 )}
-              </NavLink>
-            );
-          })}
-        </nav>
+              </div>
 
-        {/* User footer */}
-        <div className="border-t border-gray-100 p-3">
-          {sidebarOpen ? (
-            <div className="flex items-center gap-3">
-              {/* 🚨 PERBAIKAN UTAMA: Membungkus Informasi Akun dengan Link menuju /profile */}
-              <Link
-                to="/profile"
-                className="flex flex-1 items-center gap-3 min-w-0 hover:bg-gray-50 p-1.5 rounded-xl transition-all group text-left"
-                title="Lihat Profil Saya"
-              >
-                <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0 group-hover:bg-gray-900 group-hover:text-white transition-all">
-                  <span className="text-xs font-semibold text-gray-600 group-hover:text-white">
-                    {user?.nama?.charAt(0) ?? "M"}
-                  </span>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5">
-                    <p className="text-sm font-medium text-gray-900 truncate group-hover:text-indigo-600 transition-colors">
-                      {user?.nama ?? "Mahasiswa"}
-                    </p>
-                    <span
-                      className={`text-[9px] px-1.5 py-0.5 rounded-full font-bold uppercase tracking-wider ${
-                        user?.role === "admin"
-                          ? "bg-amber-50 text-amber-600 border border-amber-100"
-                          : isAlumni
-                            ? "bg-pink-50 text-pink-600 border border-pink-100"
-                            : "bg-green-50 text-green-600 border border-green-100"
-                      }`}
-                    >
-                      {user?.role === "admin"
-                        ? "Admin"
-                        : isAlumni
-                          ? "Alumni"
-                          : "Aktif"}
-                    </span>
-                  </div>
-                  <p className="text-xs text-gray-500 truncate">
-                    {user?.nrp ?? "5027231000"}
-                  </p>
-                </div>
-              </Link>
-
-              <button
-                onClick={handleLogout}
-                className="p-1.5 rounded-md text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors flex-shrink-0"
-                title="Logout"
-              >
-                <LogoutIcon className="w-4 h-4" />
-              </button>
             </div>
-          ) : (
-            <div className="flex flex-col items-center gap-2">
-              {/* 🚨 PERBAIKAN: Link Avatar ketika Sidebar sedang Menyarukan (w-16) */}
-              <Link
-                to="/profile"
-                className="w-10 h-10 rounded-xl flex items-center justify-center text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
-                title="Lihat Profil Saya"
-              >
-                <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
-                  <span className="text-xs font-semibold text-gray-600">
-                    {user?.nama?.charAt(0) ?? "M"}
-                  </span>
-                </div>
-              </Link>
+          </header>
 
-              <button
-                onClick={handleLogout}
-                className="w-full flex justify-center p-2 rounded-md text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
-                title="Logout"
-              >
-                <LogoutIcon className="w-4 h-4" />
-              </button>
-            </div>
-          )}
+          {/* Page main content */}
+          <main className="flex-1 overflow-y-auto bg-slate-950/10 text-slate-100">
+            <Outlet />
+          </main>
         </div>
-      </aside>
 
-      {/* Main content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Top bar */}
-        <header className="bg-white border-b border-gray-200 px-6 py-3 flex items-center gap-4">
-          <button
-            onClick={toggleSidebar}
-            className="p-1.5 rounded-md text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
-          >
-            <MenuIcon className="w-5 h-5" />
-          </button>
-        </header>
-
-        {/* Page content */}
-        <main className="flex-1 overflow-y-auto">
-          <Outlet />
-        </main>
       </div>
     </div>
   );
@@ -284,6 +314,7 @@ function CalendarIcon({ className, style }) {
     </svg>
   );
 }
+// Icon Grid Dashboard untuk Opportunity Board
 function BoardIcon({ className, style }) {
   return (
     <svg

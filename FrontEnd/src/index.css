@@ -1,13 +1,303 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-html,
-body {
+/* ──────────────────────────────────────────────────────────
+   CSS VARIABLE DESIGN TOKENS
+   Used to drive both dark (default) and light mode themes.
+   The [data-theme="light"] attribute is toggled on <html>.
+────────────────────────────────────────────────────────── */
+:root {
+  /* Dark mode defaults */
+  --color-bg-page:        #030712;
+  --color-bg-glass:       rgba(15, 23, 42, 0.40);
+  --color-bg-glass-light: rgba(30, 41, 59, 0.28);
+  --color-bg-card:        rgba(30, 41, 59, 0.32);
+  --color-bg-card-hover:  rgba(51, 65, 85, 0.45);
+  --color-bg-input:       rgba(15, 23, 42, 0.55);
+  --color-bg-hover:       rgba(255, 255, 255, 0.05);
+
+  --color-border:         rgba(255, 255, 255, 0.08);
+  --color-border-input:   rgba(255, 255, 255, 0.10);
+
+  --color-text-primary:   #f1f5f9;
+  --color-text-secondary: #94a3b8;
+  --color-text-muted:     #64748b;
+  --color-text-input:     #ffffff;
+  --color-placeholder:    #475569;
+
+  --color-scrollbar-thumb:       rgba(255,255,255,0.12);
+  --color-scrollbar-thumb-hover: rgba(255,255,255,0.28);
+  --color-scrollbar-track:       rgba(15,23,42,0.1);
+}
+
+[data-theme="light"] {
+  --color-bg-page:        #f1f5f9;
+  --color-bg-glass:       rgba(255, 255, 255, 0.72);
+  --color-bg-glass-light: rgba(255, 255, 255, 0.85);
+  --color-bg-card:        rgba(255, 255, 255, 0.90);
+  --color-bg-card-hover:  rgba(241, 245, 249, 0.95);
+  --color-bg-input:       rgba(255, 255, 255, 0.90);
+  --color-bg-hover:       rgba(0, 0, 0, 0.04);
+
+  --color-border:         rgba(0, 0, 0, 0.09);
+  --color-border-input:   rgba(0, 0, 0, 0.12);
+
+  --color-text-primary:   #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-muted:     #94a3b8;
+  --color-text-input:     #0f172a;
+  --color-placeholder:    #94a3b8;
+
+  --color-scrollbar-thumb:       rgba(0,0,0,0.15);
+  --color-scrollbar-thumb-hover: rgba(0,0,0,0.28);
+  --color-scrollbar-track:       rgba(0,0,0,0.04);
+}
+
+/* ──────────────────────────────────────────────────────────
+   BASE RESET
+────────────────────────────────────────────────────────── */
+html, body {
   height: 100%;
+  font-family: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--color-bg-page);
+  color: var(--color-text-primary);
+  overflow: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-body {
-  margin: 0;
+body { margin: 0; }
+
+/* ──────────────────────────────────────────────────────────
+   CUSTOM SCROLLBAR
+────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+
+::-webkit-scrollbar-track {
+  background: var(--color-scrollbar-track);
+  border-radius: 9999px;
 }
 
+::-webkit-scrollbar-thumb {
+  background: var(--color-scrollbar-thumb);
+  border-radius: 9999px;
+  transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-scrollbar-thumb-hover);
+}
+
+/* ──────────────────────────────────────────────────────────
+   GLASSMORPHISM UTILITY CLASSES
+────────────────────────────────────────────────────────── */
+.glass-panel {
+  background: var(--color-bg-glass);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid var(--color-border);
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.glass-card {
+  background: var(--color-bg-card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--color-border);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+  background: var(--color-bg-card-hover);
+  border-color: var(--color-border);
+  transform: translateY(-2px);
+}
+
+/* ──────────────────────────────────────────────────────────
+   DASHBOARD PAGE CONTENT OVERRIDES
+   Scoped to .dashboard-theme — only affects pages inside
+   the main layout (not Login / Landing pages).
+   Uses CSS variables so light/dark both work correctly.
+────────────────────────────────────────────────────────── */
+
+/* Panels / Cards */
+.dashboard-theme .bg-white,
+.dashboard-theme .bg-white\/80,
+.dashboard-theme .bg-white\/90,
+.dashboard-theme .bg-white\/95,
+.dashboard-theme .bg-white\/50 {
+  background: var(--color-bg-card) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+}
+
+/* Borders */
+.dashboard-theme .border-gray-100,
+.dashboard-theme .border-gray-200,
+.dashboard-theme .border-gray-200\/80,
+.dashboard-theme .border-gray-300 {
+  border-color: var(--color-border) !important;
+}
+
+/* ── TEXT READABILITY ────────────────────────────────── */
+/* Primary text — headings, labels, bold content */
+.dashboard-theme .text-gray-900,
+.dashboard-theme .text-gray-800,
+.dashboard-theme .text-gray-700 {
+  color: var(--color-text-primary) !important;
+}
+
+/* Secondary text — descriptions, subtitles */
+.dashboard-theme .text-gray-600,
+.dashboard-theme .text-gray-500 {
+  color: var(--color-text-secondary) !important;
+}
+
+/* Muted text — timestamps, helper text */
+.dashboard-theme .text-gray-400 {
+  color: var(--color-text-muted) !important;
+}
+
+/* Indigo accent text */
+.dashboard-theme .text-indigo-900,
+.dashboard-theme .text-indigo-800,
+.dashboard-theme .text-indigo-700,
+.dashboard-theme .text-indigo-600 {
+  /* keep their own color — they are already visible on dark */
+  color: inherit;
+}
+
+/* ── BACKGROUND TILES ──────────────────────────────── */
+.dashboard-theme .bg-gray-50,
+.dashboard-theme .bg-gray-50\/50,
+.dashboard-theme .bg-gray-50\/70,
+.dashboard-theme .bg-slate-50,
+.dashboard-theme .bg-slate-100,
+.dashboard-theme .bg-indigo-50,
+.dashboard-theme .bg-indigo-100 {
+  background: var(--color-bg-glass-light) !important;
+  border-color: var(--color-border) !important;
+}
+
+/* ── INPUTS ────────────────────────────────────────── */
+.dashboard-theme input,
+.dashboard-theme select,
+.dashboard-theme textarea {
+  background: var(--color-bg-input) !important;
+  border-color: var(--color-border-input) !important;
+  color: var(--color-text-input) !important;
+}
+
+.dashboard-theme input::placeholder,
+.dashboard-theme textarea::placeholder {
+  color: var(--color-placeholder) !important;
+}
+
+/* ── HOVER STATES ──────────────────────────────────── */
+.dashboard-theme .hover\:bg-gray-50:hover,
+.dashboard-theme .hover\:bg-gray-50\/50:hover,
+.dashboard-theme .hover\:bg-slate-50:hover {
+  background: var(--color-bg-hover) !important;
+}
+
+/* ── TABLE DIVIDERS ────────────────────────────────── */
+.dashboard-theme .divide-y > :not([hidden]) ~ :not([hidden]) {
+  border-color: var(--color-border) !important;
+}
+
+/* ──────────────────────────────────────────────────────────
+   LIGHT MODE: FULL LAYOUT ADAPTIONS
+   When data-theme=light, the main wrapper needs lighter
+   appearance — override the dark glass frames.
+────────────────────────────────────────────────────────── */
+[data-theme="light"] .glass-panel {
+  background: rgba(255, 255, 255, 0.80);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .glass-card {
+  background: rgba(255, 255, 255, 0.90);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .glass-card:hover {
+  background: rgba(248, 250, 252, 0.98);
+}
+
+/* Sidebar & header in light mode */
+[data-theme="light"] .bg-slate-950\/45 {
+  background: rgba(255, 255, 255, 0.88) !important;
+  backdrop-filter: blur(20px) !important;
+}
+
+[data-theme="light"] .bg-slate-950\/20 {
+  background: rgba(255, 255, 255, 0.80) !important;
+}
+
+[data-theme="light"] .bg-slate-900\/15 {
+  background: rgba(248, 250, 252, 0.60) !important;
+}
+
+[data-theme="light"] .bg-slate-950\/10 {
+  background: rgba(241, 245, 249, 0.50) !important;
+}
+
+/* Sidebar text/icons in light mode */
+[data-theme="light"] .text-slate-400 {
+  color: #475569 !important;
+}
+
+[data-theme="light"] .text-slate-300 {
+  color: #334155 !important;
+}
+
+[data-theme="light"] .text-white {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .text-slate-100 {
+  color: #1e293b !important;
+}
+
+/* Border in light mode */
+[data-theme="light"] .border-white\/5,
+[data-theme="light"] .border-white\/10 {
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Hover states in light mode sidebar */
+[data-theme="light"] .hover\:bg-white\/5:hover {
+  background: rgba(0, 0, 0, 0.04) !important;
+}
+
+[data-theme="light"] .hover\:bg-white\/10:hover {
+  background: rgba(0, 0, 0, 0.07) !important;
+}
+
+/* Active nav item in light mode */
+[data-theme="light"] .bg-white\/10 {
+  background: rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Login / Landing pages: dark overlay in light mode softened */
+[data-theme="light"] .bg-slate-950\/65 {
+  background: rgba(0, 0, 0, 0.35) !important;
+}
+
+[data-theme="light"] .bg-slate-950\/70 {
+  background: rgba(0, 0, 0, 0.40) !important;
+}
+
+/* ──────────────────────────────────────────────────────────
+   ANIMATIONS
+────────────────────────────────────────────────────────── */
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.2; transform: scale(1); }
+  50%       { opacity: 0.35; transform: scale(1.05); }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 8s ease-in-out infinite;
+}
