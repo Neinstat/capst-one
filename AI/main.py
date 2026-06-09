@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import academic_router, mbkm_router
+from routers import academic_router, mbkm_router, planner_router, cv_router
 
 app = FastAPI(title="SPARK DTI AI Service", version="1.0.0")
 
@@ -12,8 +12,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(academic_router.router, prefix="/api/academic", tags=["Academic"])
+app.include_router(academic_router.router, prefix="/api/academic", tags=["Academic Mapper"])
+app.include_router(planner_router.router, prefix="/api/semester", tags=["Semester Planner"])
 app.include_router(mbkm_router.router, prefix="/api/mbkm", tags=["MBKM"])
+app.include_router(cv_router.router, prefix="/api/cv", tags=["CV Reviewer"])
 
 @app.get("/")
 def read_root():
