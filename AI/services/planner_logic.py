@@ -2,7 +2,7 @@
 import copy
 from utils.curriculum_data import MASTER_KURIKULUM
 
-def distribute_courses(wajib_courses, wun_courses, pilihan_courses, schedule_blueprint, taken_pilihan_sks):
+def distribute_courses(wajib_courses, wun_courses, pilihan_courses, schedule_blueprint, taken_pilihan_sks, plan_type="normal"):
     """
     Smart Bucket Fill dengan Aturan Kurikulum ITS & Pre-Alokasi TA:
     0. Fase 0: Ekstraksi & Pre-Alokasi Mutlak untuk Pra-TA dan TA.
@@ -39,6 +39,10 @@ def distribute_courses(wajib_courses, wun_courses, pilihan_courses, schedule_blu
         
     # 3. Pra-TA HARUS persis satu semester sebelum TA
     prata_idx = ta_idx - 1 if ta_idx > 0 else 0
+
+    # Khusus untuk Plan C (Experience/Magang di Semester 7), Pra-TA harus ditarik lebih awal ke Semester 6
+    if plan_type == "experience":
+        prata_idx = 0
 
     # 4. Kunci mutlak posisi Pra-TA
     if prata_course:
@@ -92,9 +96,27 @@ def distribute_courses(wajib_courses, wun_courses, pilihan_courses, schedule_blu
     # --- PHASE 3: ALOKASI MK PILIHAN (Strict 15 SKS Quota Limit) ---
     # =========================================================================
     sks_pilihan_needed = 15 - taken_pilihan_sks
-    available_pilihan = copy.deepcopy(pilihan_courses)
+    
+    # Pisahkan matkul Magang agar tidak teralokasi sembarangan ke plan/semester lain
+    magang_courses = [c for c in pilihan_courses if "magang" in str(c.get("nama", "")).lower()]
+    regular_pilihan = [c for c in pilihan_courses if "magang" not in str(c.get("nama", "")).lower()]
+    
+    available_pilihan = copy.deepcopy(regular_pilihan)
     
     if sks_pilihan_needed > 0:
+        # Pre-alokasi Matkul Magang KHUSUS untuk Plan C (Experience) di Semester 7
+        if plan_type == "experience":
+            sem_7 = next((s for s in schedule if s["periode"] == "Semester 7"), None)
+            if sem_7:
+                for mc in magang_courses:
+                    c_sks = int(mc.get("sks", 0))
+                    # Masukkan selama kuota SKS semester dan kuota SKS pilihan masih muat
+                    if sem_7["_current_sks"] + c_sks <= sem_7["max_sks"] and (sks_pilihan_needed - c_sks) >= 0:
+                        sem_7["courses"].append(mc)
+                        sem_7["_current_sks"] += c_sks
+                        sks_pilihan_needed -= c_sks
+
+        # Sisa kuota SKS Pilihan diisi dengan matkul pilihan reguler
         for sem in schedule:
             idx = 0
             while idx < len(available_pilihan) and sem["_current_sks"] < sem["max_sks"] and sks_pilihan_needed > 0:
@@ -167,14 +189,15 @@ def generate_blueprint_plans(extracted_courses: list) -> dict:
         if kode_mk in taken_codes:
             continue
             
-        if kode_mk.startswith(wun_prefixes) or mk.get("tipe") == "Agama":
+        # Cek Pilihan terlebih dahulu agar KKN Tematik (UG234917) tidak masuk ke WUN wajib
+        if mk.get("tipe") == "Pilihan":
+            pool_pilihan.append(mk)
+        elif kode_mk.startswith(wun_prefixes) or mk.get("tipe") == "Agama":
             if mk.get("tipe") == "Agama":
                 if not has_taken_religion and kode_mk == "UG234901":
                     remaining_wun.append(mk)
             else:
                 remaining_wun.append(mk)
-        elif mk.get("tipe") == "Pilihan":
-            pool_pilihan.append(mk)
         else:
             remaining_wajib.append(mk)
 
@@ -189,15 +212,15 @@ def generate_blueprint_plans(extracted_courses: list) -> dict:
     ]
     
     plan_b_blueprint = [
-        {"periode": "Semester 6", "max_sks": 20, "fokus": "Penyelarasan Kompetensi Utama", "courses": []},
+        {"periode": "Semester 6", "max_sks": 24, "fokus": "Penyelarasan Kompetensi Utama", "courses": []},
         {"periode": "Semester 7", "max_sks": 20, "fokus": "Persiapan Magang / Portofolio", "courses": []},
-        {"periode": "Semester 8", "max_sks": 24, "fokus": "Eksekusi Tugas Akhir & Kelulusan", "courses": []}
+        {"periode": "Semester 8", "max_sks": 20, "fokus": "Eksekusi Tugas Akhir & Kelulusan", "courses": []}
     ]
     
     plan_c_blueprint = [
-        {"periode": "Semester 6", "max_sks": 22, "fokus": "Tuntaskan Seluruh MK Teori Wajib", "courses": []},
+        {"periode": "Semester 6", "max_sks": 24, "fokus": "Tuntaskan Seluruh MK Teori Wajib", "courses": []},
         {"periode": "Semester 7", "max_sks": 20, "fokus": "Program Magang Penuh Waktu (Konversi MBKM)", "courses": []},
-        {"periode": "Semester 8", "max_sks": 24, "fokus": "Laporan Magang & Eksekusi Tugas Akhir", "courses": []}
+        {"periode": "Semester 8", "max_sks": 22, "fokus": "Laporan Magang & Eksekusi Tugas Akhir", "courses": []}
     ]
 
     target_total_sks = 144
@@ -207,17 +230,17 @@ def generate_blueprint_plans(extracted_courses: list) -> dict:
         "fast": {
             "title": "Plan A — Lulus 3.5 Tahun",
             "desc": "Ambil maks SKS tiap semester, percepat kelulusan.",
-            "schedule": distribute_courses(remaining_wajib, remaining_wun, pool_pilihan, plan_a_blueprint, taken_pilihan_sks)
+            "schedule": distribute_courses(remaining_wajib, remaining_wun, pool_pilihan, plan_a_blueprint, taken_pilihan_sks, "fast")
         },
         "balanced": {
             "title": "Plan B — Optimalkan SKS + Karir",
             "desc": "Mix SKS optimal, fokus skill industri dan persiapan karir.",
-            "schedule": distribute_courses(remaining_wajib, remaining_wun, pool_pilihan, plan_b_blueprint, taken_pilihan_sks)
+            "schedule": distribute_courses(remaining_wajib, remaining_wun, pool_pilihan, plan_b_blueprint, taken_pilihan_sks, "balanced")
         },
         "experience": {
             "title": "Plan C — Fokus Experience",
             "desc": "Selesaikan wajib lebih awal, magang penuh di akhir studi.",
-            "schedule": distribute_courses(remaining_wajib, remaining_wun, pool_pilihan, plan_c_blueprint, taken_pilihan_sks)
+            "schedule": distribute_courses(remaining_wajib, remaining_wun, pool_pilihan, plan_c_blueprint, taken_pilihan_sks, "experience")
         }
     }
 
