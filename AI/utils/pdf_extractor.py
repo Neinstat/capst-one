@@ -2,15 +2,20 @@ import pdfplumber
 import io
 import re
 
+# Pre-compile regex pattern di luar fungsi untuk efisiensi
+NRP_PATTERN = re.compile(r'\b\d{10}\b')
+NAMA_PATTERN = re.compile(r'(Nama / Name\s*:\s*)([^\n]+)')
+TTL_PATTERN = re.compile(r'(Place, Date of Birth\s*)([^\n]+)')
+
 def mask_sensitive_data(text: str) -> str:
     # 1. Sensor NRP
-    text = re.sub(r'\b\d{10}\b', '[NRP_DISEMBUNYIKAN]', text)
+    text = NRP_PATTERN.sub('[NRP_DISEMBUNYIKAN]', text)
     
     # 2. Sensor Nama
-    text = re.sub(r'(Nama / Name\s*:\s*)([^\n]+)', r'\1[NAMA_DISEMBUNYIKAN]', text)
+    text = NAMA_PATTERN.sub(r'\1[NAMA_DISEMBUNYIKAN]', text)
     
     # 3. Sensor TTL
-    text = re.sub(r'(Place, Date of Birth\s*)([^\n]+)', r'\1[TTL_DISEMBUNYIKAN]', text)
+    text = TTL_PATTERN.sub(r'\1[TTL_DISEMBUNYIKAN]', text)
     
     return text
 

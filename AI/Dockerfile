@@ -2,13 +2,13 @@ FROM python:3.9-slim
 
 WORKDIR /app
 
-# Install dependensi sistem terbaru yang mendukung pemrosesan grafis/PDF
+# Install dependensi sistem yang diperlukan
 RUN apt-get update && apt-get install -y \
     libgl1 \
     libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
-# Instalasi library Python langsung
+# Pastikan google-genai ada di dalam daftar instalasi langsung ini
 RUN pip install --no-cache-dir \
     fastapi \
     uvicorn \
@@ -17,7 +17,8 @@ RUN pip install --no-cache-dir \
     pdfplumber \
     axios \
     groq \
-    python-dotenv
+    python-dotenv \
+    google-genai
 
 COPY . .
 

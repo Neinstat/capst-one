@@ -25,9 +25,18 @@ KUNCI EKSTRAKSI: Setiap mata kuliah SELALU ditandai dengan "Kode Mata Kuliah" ya
    - Logika Penilaian: Identifikasi matkul yang relevan dengan domain tersebut. Konversi nilainya (A=100, AB=85, B=75, C=60). Jika ada LEBIH DARI SATU matkul relevan, hitung nilai RATA-RATANYA agar chart terlihat realistis (hindari memberikan nilai 100 sempurna kecuali benar-benar kumulatif rata-ratanya 100). Jika tidak ada matkul relevan, berikan skor dasar (10-20).
 
 3. REKOMENDASI KARIR (PERSONALISASI & BUKTI DATA):
-   - WAJIB BERDASARKAN DATA: Hasilkan 2-3 role karir IT yang SANGAT SPESIFIK murni dari skor skill tertinggi dan nama mata kuliah yang menonjol.
-   - CONTOH VARIASI: Gunakan spektrum karir IT yang luas dan relevan (contoh: "Frontend Engineer", "Data Scientist", "UI/UX Designer", "Network Architect", "Game Developer", "QA Automation", "ERP Consultant", dll) yang benar-benar relevan dengan transkrip mahasiswa ini. Pastikan nama role SINGKAT dan PADAT (Maksimal 2-3 kata, contoh: "AI Engineer" bukan "Artificial Intelligence/Machine Learning Engineer") agar tidak merusak layout UI Frontend.
-   - Hitung persentase kecocokan ("match" 0-100%).
+   - WAJIB BERDASARKAN DATA: Hasilkan 2-3 role karir IT murni dari skor skill tertinggi dan nama mata kuliah yang menonjol dari transkrip tersebut.
+   - KRITIKAL - BATASAN PILIHAN KARIR: Anda HANYA DIPERBOLEHKAN memilih role dari 9 daftar Prospek Karir resmi berikut ini (DILARANG KERAS membuat role di luar daftar ini):
+     1. Software Engineer
+     2. Web Developer
+     3. Data Engineer
+     4. Data Scientist
+     5. Network Engineer
+     6. Cybersecurity Analyst
+     7. IoT Engineer
+     8. Smart City Technology Specialist
+     9. Cloud Engineer
+   - Hitung persentase kecocokan ("match" 0-100%) antara skill mahasiswa dengan role tersebut.
    - Berikan warna ("color") dalam format HEX code yang melambangkan role tersebut. Gunakan palet warna VIBRANT dan MODERN khas UI/UX (contoh: Emerald #10b981, Violet #8b5cf6, Amber #f59e0b) agar komponen visual Frontend terlihat hidup.
 
 === FORMAT OUTPUT JSON ===

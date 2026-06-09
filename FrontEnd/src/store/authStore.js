@@ -43,14 +43,22 @@ export const useUploadStore = create((set) => ({
     set({ transcriptFile: null, transcriptDocumentId: null }),
 }));
 
-// 3. Store untuk UI (Dibutuhkan oleh MainLayout.jsx - Mencegah SyntaxError)[cite: 6]
+// 3. Store untuk UI (Dibutuhkan oleh MainLayout.jsx - Mencegah SyntaxError)
 export const useUIStore = create((set) => ({
   sidebarOpen: true,
   activeModal: null,
+  theme: localStorage.getItem("spark-theme") || "dark",
 
   toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),
   openModal: (name) => set({ activeModal: name }),
   closeModal: () => set({ activeModal: null }),
+  toggleTheme: () =>
+    set((state) => {
+      const nextTheme = state.theme === "dark" ? "light" : "dark";
+      localStorage.setItem("spark-theme", nextTheme);
+      document.documentElement.setAttribute("data-theme", nextTheme);
+      return { theme: nextTheme };
+    }),
 }));
 
 // 4. Store untuk Reminder/Notifikasi
