@@ -5,8 +5,19 @@ Handles SKS conversion calculation, activity detection, and AI response generati
 
 import os
 import re
-import requests
 from typing import Dict, Any, Tuple, Optional
+from google import genai
+from google.genai import types
+from utils.prompts import SYSTEM_PROMPT_MBKM_ASSISTANT
+from services.rag_agent_logic import retrieve_mbkm_knowledge
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# Initialize Gemini Client
+client = None
+if os.getenv("GEMINI_API_KEY"):
+    client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -40,52 +51,28 @@ DEFAULT_DOCUMENTS = ["LoA", "PKS", "Form AK01", "Form Matching"]
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# HELPER: Parse Duration
+# HELPER: Parse Duration & Activity
 # ─────────────────────────────────────────────────────────────────────────────
 
 def parse_duration_to_weeks(message: str) -> Optional[int]:
-    """
-    Parse message to extract duration and convert to weeks.
-    
-    Supports:
-    - "6 bulan" -> 24 weeks
-    - "3 minggu" -> 3 weeks
-    - "12 minggu" -> 12 weeks
-    - "16 minggu" -> 16 weeks
-    
-    Returns: weeks (int) or None if not found
-    """
+    """Parse message to extract duration and convert to weeks."""
     message_lower = message.lower()
     
-    # Check for months (bulan)
     month_pattern = r'(\d+)\s*(?:bulan|bln|bln\.)'
     month_match = re.search(month_pattern, message_lower)
     if month_match:
-        months = int(month_match.group(1))
-        weeks = months * 4  # 1 bulan = 4 minggu
-        return weeks
+        return int(month_match.group(1)) * 4
     
-    # Check for weeks (minggu)
     week_pattern = r'(\d+)\s*(?:minggu|mgg|mgg\.)'
     week_match = re.search(week_pattern, message_lower)
     if week_match:
-        weeks = int(week_match.group(1))
-        return weeks
+        return int(week_match.group(1))
     
     return None
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# HELPER: Detect Activity Type
-# ─────────────────────────────────────────────────────────────────────────────
-
 def detect_activity_type(message: str) -> str:
-    """
-    Detect activity type from message.
-    
-    Returns: activity_type (str) - one of: magang, lomba, studi_independen, 
-             pertukaran_pelajar, unknown
-    """
+    """Detect activity type from message."""
     message_lower = message.lower()
     
     activities = {
@@ -104,152 +91,111 @@ def detect_activity_type(message: str) -> str:
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# HELPER: Calculate SKS
+# CORE LOGIC: Modular Functions
 # ─────────────────────────────────────────────────────────────────────────────
+
+def detect_intent(message: str) -> str:
+    """
+    Detect user intent from message.
+    Intents: sks_calculation, document_requirement, mbkm_information, general_question
+    """
+    message_lower = message.lower()
+    
+    # Intent 1: SKS Calculation (contains duration + activity)
+    duration_pattern = r'(\d+)\s*(?:bulan|bln|minggu|mgg)'
+    has_duration = bool(re.search(duration_pattern, message_lower))
+    activity = detect_activity_type(message)
+    
+    if has_duration and activity != "unknown":
+        return "sks_calculation"
+        
+    # Intent 2: Document Requirement
+    doc_keywords = ['dokumen', 'syarat', 'berkas', 'form', 'loa', 'persyaratan', 'butuh apa']
+    if any(keyword in message_lower for keyword in doc_keywords):
+        return "document_requirement"
+        
+    # Intent 3: MBKM Information
+    info_keywords = ['apa itu', 'perbedaan', 'beda', 'bagaimana', 'konversi', 'sks', 'aturan']
+    if any(keyword in message_lower for keyword in info_keywords):
+        return "mbkm_information"
+        
+    # Default Intent
+    return "general_question"
+
 
 def calculate_sks(duration_weeks: int, activity_type: str) -> int:
-    """
-    Calculate estimated SKS based on duration and activity type.
-    
-    Formula:
-    - 1-4 weeks = 3 SKS
-    - 5-8 weeks = 6 SKS
-    - 9-12 weeks = 9 SKS
-    - 13-16 weeks = 12 SKS
-    - 17-20 weeks = 15 SKS
-    - 21+ weeks = 20 SKS (capped at max)
-    """
-    
-    # Get max SKS for activity type
+    """Calculate estimated SKS based on duration and activity type."""
     max_sks = SKS_RULES.get(activity_type, {}).get("max_sks", 20)
-    
-    # Calculate based on duration
-    # Every 4 weeks = 6 SKS
     sks = (duration_weeks // 4) * 6
     
-    # Ensure minimum 3 SKS for any duration > 0
     if sks == 0 and duration_weeks > 0:
         sks = 3
-    
-    # Cap at maximum
-    sks = min(sks, max_sks)
-    
-    return sks
+        
+    return min(sks, max_sks)
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# HELPER: Get Required Documents
-# ─────────────────────────────────────────────────────────────────────────────
-
-def get_required_documents(activity_type: str) -> list[str]:
-    """
-    Get list of required documents for activity type.
-    """
+def get_documents(activity_type: str) -> list[str]:
+    """Get list of required documents for activity type."""
     return SKS_RULES.get(activity_type, {}).get("documents", DEFAULT_DOCUMENTS)
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# GROQ API: Generate Natural Response
-# ─────────────────────────────────────────────────────────────────────────────
-
-async def generate_groq_response(
-    message: str,
-    activity_type: str,
-    duration_weeks: int,
-    estimated_sks: int,
-    documents: list[str]
+def generate_mbkm_context(
+    intent: str, 
+    activity_type: str, 
+    duration_weeks: Optional[int], 
+    estimated_sks: Optional[int], 
+    documents: list[str],
+    message: str = ""
 ) -> str:
-    """
-    Use Groq API to generate natural language response.
-    Falls back to manual response if API fails.
-    
-    Model: llama3-70b-8192
-    """
-    
-    groq_api_key = os.getenv("GROQ_API_KEY")
-    
-    if not groq_api_key:
-        # Fallback: No API key available
-        return generate_fallback_response(activity_type, duration_weeks, estimated_sks, documents)
-    
-    try:
-        # Prepare prompt for Groq
-        prompt = f"""
-Kamu adalah asisten AI untuk menghitung konversi SKS MBKM di universitas. 
-User menginformasikan kegiatan MBKM mereka: "{message}"
-
-Aktivitas: {activity_type}
-Durasi: {duration_weeks} minggu
-Estimasi SKS: {estimated_sks} SKS
-Dokumen yang diperlukan: {', '.join(documents)}
-
-Berikan respons natural yang:
-1. Menyebutkan estimasi SKS
-2. Menjelaskan perhitungan (durasi + aturan)
-3. Menyebutkan dokumen yang diperlukan
-4. Memberikan motivasi singkat
-
-Respons dalam bahasa Indonesia, ringkas (2-3 kalimat).
-        """.strip()
-        
-        # Call Groq API
-        response = requests.post(
-            "https://api.groq.com/openai/v1/chat/completions",
-            headers={
-                "Authorization": f"Bearer {groq_api_key}",
-                "Content-Type": "application/json",
-            },
-            json={
-                "model": "llama3-70b-8192",
-                "messages": [
-                    {
-                        "role": "user",
-                        "content": prompt
-                    }
-                ],
-                "temperature": 0.7,
-                "max_tokens": 300,
-            },
-            timeout=10
+    """Generate system context based on intent and extracted data."""
+    if intent == "sks_calculation":
+        return (
+            f"[Konteks Sistem]\n"
+            f"User menanyakan estimasi SKS untuk aktivitas MBKM.\n"
+            f"- Aktivitas: {activity_type}\n"
+            f"- Durasi: {duration_weeks} minggu\n"
+            f"- Estimasi SKS yang didapat: {estimated_sks} SKS\n"
+            f"- Dokumen Wajib: {', '.join(documents)}\n"
         )
+    elif intent == "document_requirement":
+        if activity_type != "unknown":
+            return f"[Konteks Sistem]\nUser menanyakan dokumen untuk {activity_type}.\nDokumen Wajib: {', '.join(documents)}\n"
+        return f"[Konteks Sistem]\nUser menanyakan dokumen MBKM secara umum.\nDokumen Umum MBKM: {', '.join(DEFAULT_DOCUMENTS)}\n"
+    elif intent == "mbkm_information":
+        rag_info = retrieve_mbkm_knowledge(message)
+        return f"[Konteks Sistem]\nUser menanyakan informasi MBKM. Referensi:\n{rag_info}\nJelaskan secara edukatif dan ringkas.\n"
+    else:
+        return "[Konteks Sistem]\nUser memberikan sapaan atau pertanyaan umum. Jawablah dengan ramah.\n"
+
+
+async def generate_ai_response(message: str, context: str) -> str:
+    """Use Gemini Flash Lite to generate natural language response."""
+    if not client:
+        return _generate_fallback_response(context)
         
-        response.raise_for_status()
+    try:
+        print("Memanggil Gemini...")
+        prompt_content = f"{context}\n\nPertanyaan User: \"{message}\""
         
-        # Extract response
-        result = response.json()
-        if "choices" in result and len(result["choices"]) > 0:
-            return result["choices"][0]["message"]["content"].strip()
-        
+        response = await client.aio.models.generate_content(
+            model='gemini-3.1-flash-lite',
+            contents=prompt_content,
+            config=types.GenerateContentConfig(
+                system_instruction=SYSTEM_PROMPT_MBKM_ASSISTANT,
+                temperature=0.7,
+                max_output_tokens=500
+            )
+        )
+        print("Gemini berhasil")
+        return response.text.strip()
     except Exception as e:
-        print(f"Groq API error: {str(e)}")
-        # Fallback to manual response
-    
-    return generate_fallback_response(activity_type, duration_weeks, estimated_sks, documents)
+        print("Gemini gagal:", e)
+        return _generate_fallback_response(context)
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# FALLBACK: Generate Manual Response
-# ─────────────────────────────────────────────────────────────────────────────
-
-def generate_fallback_response(
-    activity_type: str,
-    duration_weeks: int,
-    estimated_sks: int,
-    documents: list[str]
-) -> str:
-    """
-    Generate manual response when Groq API is unavailable.
-    """
-    
-    activity_label = {
-        "magang": "magang",
-        "lomba": "kompetisi",
-        "studi_independen": "studi independen",
-        "pertukaran_pelajar": "pertukaran pelajar",
-        "unknown": "kegiatan MBKM"
-    }.get(activity_type, "kegiatan")
-    
-    return f"Estimasi konversi SKS untuk {activity_label} selama {duration_weeks} minggu adalah **{estimated_sks} SKS**. Dokumen yang diperlukan: {', '.join(documents)}. Silakan hubungi akademik untuk proses pendaftaran lebih lanjut."
+def _generate_fallback_response(context: str) -> str:
+    """Fallback if AI generation fails."""
+    return f"Sistem AI saat ini sedang sibuk, namun berikut adalah informasi sistem:\n\n{context}"
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -257,49 +203,45 @@ def generate_fallback_response(
 # ─────────────────────────────────────────────────────────────────────────────
 
 async def process_mbkm_chat(message: str) -> Dict[str, Any]:
-    """
-    Process user message and generate chatbot response.
+    """Process user message and generate chatbot response."""
     
-    Returns:
-    {
-        "reply": "Natural language response from AI",
-        "data": {
-            "activity_type": "magang|lomba|studi_independen|pertukaran_pelajar|unknown",
-            "duration_weeks": int,
-            "estimated_sks": int,
-            "documents": list[str]
-        }
-    }
-    """
+    # 1. Intent Detection
+    intent = detect_intent(message)
+    print("Intent:", intent)
     
-    # Step 1: Detect activity type
+    # 2. Information Extraction
     activity_type = detect_activity_type(message)
+    duration_weeks = None
+    estimated_sks = None
+    documents = []
     
-    # Step 2: Parse duration
-    duration_weeks = parse_duration_to_weeks(message)
-    
-    # If no duration found, default to 12 weeks (3 months)
-    if duration_weeks is None:
-        duration_weeks = 12
-    
-    # Step 3: Calculate SKS
-    estimated_sks = calculate_sks(duration_weeks, activity_type)
-    
-    # Step 4: Get required documents
-    documents = get_required_documents(activity_type)
-    
-    # Step 5: Generate AI response
-    reply = await generate_groq_response(
-        message,
-        activity_type,
-        duration_weeks,
-        estimated_sks,
-        documents
+    if intent in ["sks_calculation", "document_requirement"]:
+        duration_weeks = parse_duration_to_weeks(message)
+        documents = get_documents(activity_type)
+        
+        if intent == "sks_calculation":
+            if duration_weeks is None:
+                duration_weeks = 12 # Default 3 bulan jika durasi eksplisit tidak ada tapi intent terdeteksi
+            estimated_sks = calculate_sks(duration_weeks, activity_type)
+            
+    # 3. Knowledge/Context Generation
+    context = generate_mbkm_context(
+        intent=intent,
+        activity_type=activity_type,
+        duration_weeks=duration_weeks,
+        estimated_sks=estimated_sks,
+        documents=documents,
+        message=message
     )
     
+    # 4. AI Response Generation
+    reply = await generate_ai_response(message, context)
+    
+    # Return structured response
     return {
         "reply": reply,
         "data": {
+            "intent": intent,
             "activity_type": activity_type,
             "duration_weeks": duration_weeks,
             "estimated_sks": estimated_sks,

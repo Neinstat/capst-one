@@ -70,6 +70,8 @@ async def mbkm_chat(request: ChatRequest = Body(...)) -> ChatResponse:
                 detail="Pesan tidak boleh kosong"
             )
         
+        print("Request masuk:", request.message)
+        
         # Process message
         result = await process_mbkm_chat(request.message)
         
@@ -81,9 +83,10 @@ async def mbkm_chat(request: ChatRequest = Body(...)) -> ChatResponse:
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"Terjadi kesalahan pada AI Service: {str(e)}"
+        print("Gemini gagal:", e)
+        return ChatResponse(
+            reply="Halo, saya adalah MBKM Assistant. Saat ini layanan AI sedang mengalami gangguan, namun saya tetap dapat membantu informasi dasar MBKM.",
+            data={}
         )
 
 
