@@ -14,6 +14,8 @@ app.add_middleware(
 
 app.include_router(academic_router.router, prefix="/api/academic", tags=["Academic"])
 app.include_router(mbkm_router.router, prefix="/api/mbkm", tags=["MBKM"])
+print("Router MBKM loaded")
+app.include_router(cv_router.router, prefix="/api/cv", tags=["CV Reviewer"])
 
 @app.get("/")
 def read_root():
