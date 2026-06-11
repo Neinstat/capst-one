@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Outlet, NavLink, useNavigate, Link } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { Outlet, NavLink, useNavigate, Link, useLocation } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
 import { useUIStore } from "../../store/authStore";
 import { FEATURE_COLORS, checkIsAlumniOrAdmin } from "../../lib/utils";
@@ -45,7 +45,15 @@ export default function MainLayout() {
   const toggleSidebar = useUIStore((state) => state.toggleSidebar);
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const mainRef = useRef(null);
   const isAlumni = checkIsAlumniOrAdmin(user?.role);
+
+  useEffect(() => {
+    if (mainRef.current) {
+      mainRef.current.scrollTop = 0;
+    }
+  }, [location.pathname]);
 
   // State untuk Dropdown Profile di Header
   const [profileOpen, setProfileOpen] = useState(false);
@@ -69,28 +77,30 @@ export default function MainLayout() {
     navigate("/auth");
   }
 
-  {/* Background iamge */ }
-
   return (
+    // Mengunci container paling luar agar tidak memicu scrollbar browser utama
     <div
-      className="min-h-screen bg-slate-950 flex items-center justify-center p-4 md:p-6 relative overflow-hidden dashboard-theme text-slate-100"
+      className="w-screen h-screen flex items-center justify-center p-4 md:p-6 relative overflow-hidden dashboard-theme text-slate-100"
       style={{
         backgroundImage: "url('/tower-2.jpg')",
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
     >
+      {/* Dark overlay background layer */}
+      <div className="absolute inset-0 bg-slate-950/40 backdrop-blur-sm z-0" />
+
       {/* Deep Dark Color Layer for Atmospheric Look */}
       <div className="absolute -top-32 -right-32 w-[450px] h-[450px] bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none z-0" />
       <div className="absolute -bottom-32 -left-32 w-[450px] h-[450px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none z-0" />
 
-      {/* Main Glassmorphic Wrapper */}
+      {/* Main Glassmorphic Wrapper - Dipastikan kaku di h-[92vh] dan overflow-hidden */}
       <div className="w-full max-w-7xl h-[92vh] rounded-[2.5rem] border border-white/10 glass-panel flex overflow-hidden shadow-2xl relative z-10 font-sans">
 
         {/* Left Sidebar */}
         <aside
           className={`
-            flex flex-col border-r border-white/5 bg-slate-950/45 backdrop-blur-2xl
+            flex flex-col border-r border-white/5 bg-slate-950/45 backdrop-blur-2xl h-full flex-shrink-0
             transition-all duration-300 ease-in-out select-none
             ${sidebarOpen ? "w-72 p-5" : "w-20 p-4"}
           `}
@@ -184,10 +194,10 @@ export default function MainLayout() {
           </div>
         </aside>
 
-        {/* Center Content and Header */}
-        <div className="flex-1 flex flex-col overflow-hidden bg-slate-900/15">
-          {/* Header Top Bar */}
-          <header className="border-b border-white/5 px-6 py-4 flex items-center justify-between bg-slate-950/20 backdrop-blur-md relative z-30">
+        {/* Center Content and Header - Ditambahkan h-full & overflow-hidden agar bertindak sebagai viewport batas atas */}
+        <div className="flex-1 h-full flex flex-col overflow-hidden bg-slate-900/15">
+          {/* Header Top Bar - Ditambahkan flex-shrink-0 */}
+          <header className="border-b border-white/5 px-6 py-4 flex items-center justify-between bg-slate-950/20 backdrop-blur-md relative z-30 flex-shrink-0">
             <div className="flex items-center gap-3">
               <span className="text-[10px] font-black uppercase tracking-wider text-blue-400 bg-blue-500/10 border border-blue-500/20 px-2.5 py-1 rounded-lg">
                 SPARK DTI ITS
@@ -257,8 +267,8 @@ export default function MainLayout() {
             </div>
           </header>
 
-          {/* Page main content */}
-          <main className="flex-1 overflow-y-auto bg-slate-950/10 text-slate-100">
+          {/* Page main content - PERBAIKAN: Ditambahkan h-full, min-h-0, dan clean-scrollbar */}
+          <main ref={mainRef} className="flex-1 h-full overflow-y-auto bg-slate-950/10 text-slate-100 min-h-0 clean-scrollbar">
             <Outlet />
           </main>
         </div>
@@ -315,7 +325,6 @@ function CalendarIcon({ className, style }) {
     </svg>
   );
 }
-// Icon Grid Dashboard untuk Opportunity Board
 function BoardIcon({ className, style }) {
   return (
     <svg
