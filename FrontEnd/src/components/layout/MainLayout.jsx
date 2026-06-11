@@ -75,13 +75,14 @@ export default function MainLayout() {
     <div
       className="min-h-screen bg-slate-950 flex items-center justify-center p-4 md:p-6 relative overflow-hidden dashboard-theme text-slate-100"
       style={{
-        backgroundImage: "url('/616+Vkii5SL.jpg')",
+        backgroundImage: "url('/tower-2.jpg')",
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
     >
       {/* Deep Dark Color Layer for Atmospheric Look */}
-      <div className="absolute inset-0 bg-slate-950/50 backdrop-blur-[3px] pointer-events-none" />
+      <div className="absolute -top-32 -right-32 w-[450px] h-[450px] bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none z-0" />
+      <div className="absolute -bottom-32 -left-32 w-[450px] h-[450px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none z-0" />
 
       {/* Main Glassmorphic Wrapper */}
       <div className="w-full max-w-7xl h-[92vh] rounded-[2.5rem] border border-white/10 glass-panel flex overflow-hidden shadow-2xl relative z-10 font-sans">
@@ -98,7 +99,7 @@ export default function MainLayout() {
           <div className={`flex items-center mb-6 ${sidebarOpen ? "justify-between px-2" : "justify-center"}`}>
             {sidebarOpen ? (
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-lg bg-gradient-to-tr from-rose-500 to-indigo-600 flex items-center justify-center text-[10px] font-black text-white shadow-md">
+                <div className="w-6 h-6 rounded-lg bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center text-[10px] font-black text-white shadow-md shadow-cyan-500/10">
                   SP
                 </div>
                 <span className="text-xs font-black text-slate-200 tracking-wider uppercase">
@@ -188,7 +189,7 @@ export default function MainLayout() {
           {/* Header Top Bar */}
           <header className="border-b border-white/5 px-6 py-4 flex items-center justify-between bg-slate-950/20 backdrop-blur-md relative z-30">
             <div className="flex items-center gap-3">
-              <span className="text-[10px] font-black uppercase tracking-wider text-rose-500/90 bg-rose-500/10 border border-rose-500/20 px-2.5 py-1 rounded-lg">
+              <span className="text-[10px] font-black uppercase tracking-wider text-blue-400 bg-blue-500/10 border border-blue-500/20 px-2.5 py-1 rounded-lg">
                 SPARK DTI ITS
               </span>
             </div>
@@ -205,7 +206,7 @@ export default function MainLayout() {
                   className="flex items-center gap-2 focus:outline-none p-1 rounded-xl hover:bg-white/5 transition-all"
                   title="Menu Profil"
                 >
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-rose-500 to-indigo-600 flex items-center justify-center text-xs font-black text-white shadow-md border border-white/10">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center text-xs font-black text-white shadow-md shadow-cyan-500/10 border border-white/10">
                     {user?.nama ? user.nama.charAt(0).toUpperCase() : "M"}
                   </div>
                 </button>

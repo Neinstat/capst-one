@@ -39,9 +39,9 @@ export default function LandingPage() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center p-6 relative overflow-hidden font-sans"
+      className="min-h-screen flex items-center justify-center p-6 relative overflow-hidden font-sans bg-slate-950"
       style={{
-        backgroundImage: "url('/dashboard_bg.png')",
+        backgroundImage: "url('/tower-2.jpg')",
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
@@ -49,26 +49,38 @@ export default function LandingPage() {
       {/* Dark overlay */}
       <div className="absolute inset-0 bg-slate-950/70 backdrop-blur-[2px] pointer-events-none" />
 
+      {/* Ambient Glow Lingkaran Efek Laboratorium / TI ITS */}
+      <div className="absolute -top-32 right-1/4 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[130px] pointer-events-none z-0" />
+      <div className="absolute bottom-0 left-1/4 w-[450px] h-[450px] bg-blue-600/5 rounded-full blur-[120px] pointer-events-none z-0" />
+
       <div className="max-w-6xl w-full mx-auto px-4 py-12 relative z-10">
-        
+
         {/* Top Info Header */}
         <div className="flex items-start justify-between gap-6 flex-wrap pb-8 border-b border-white/10">
           <div>
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md text-xs font-black text-rose-300 border border-white/10 uppercase tracking-widest">
-              <span className="w-2 h-2 rounded-full bg-rose-400 animate-pulse" />
+            {/* Badge Atas diubah ke Biru Resmi ITS */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 backdrop-blur-md text-xs font-black text-blue-400 border border-blue-500/20 uppercase tracking-widest">
+              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
               SPARK DTI ITS
             </div>
+
             <h1 className="text-4xl md:text-5xl font-black text-white mt-4 tracking-tight leading-none">
               Perencanaan Akademik <br />
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-rose-400 to-indigo-400">& Rute Karir Digital</span>
+              {/* Gradien Judul diubah menjadi Blue-Cyan Elektrik khas TI */}
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-cyan-400 to-sky-300 drop-shadow-sm">
+                & Rute Karir Digital
+              </span>
             </h1>
+
             <p className="text-slate-400 mt-3 max-w-2xl text-sm font-semibold leading-relaxed">
               Platform cerdas bertenaga AI untuk memetakan capaian akademik Anda, menavigasi konversi SKS, meninjau CV, serta merencanakan semester perkuliahan di Departemen Teknologi Informasi.
             </p>
           </div>
+
+          {/* Tombol Utama diubah ke Gradien Biru ITS ke Cyan TI */}
           <button
             onClick={() => navigate('/auth')}
-            className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-rose-500 to-indigo-600 hover:from-rose-600 hover:to-indigo-700 text-white text-sm font-bold shadow-lg shadow-rose-500/25 transition-all hover:scale-105 active:scale-95 flex-shrink-0"
+            className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white text-sm font-bold shadow-lg shadow-cyan-500/20 transition-all hover:scale-105 active:scale-95 flex-shrink-0"
           >
             Masuk Ke Dashboard
           </button>
@@ -88,7 +100,7 @@ export default function LandingPage() {
               <button
                 key={f.key}
                 onClick={() => navigate(f.path)}
-                className="text-left glass-card rounded-3xl p-6 hover:border-white/20 transition-all flex flex-col justify-between group h-64 border border-white/5 bg-slate-900/30 backdrop-blur-xl"
+                className="text-left glass-card rounded-3xl p-6 hover:border-white/20 transition-all flex flex-col justify-between group h-64 border border-white/5 bg-slate-900/30 backdrop-blur-xl hover:bg-slate-900/40"
               >
                 <div>
                   <div className="flex items-center gap-3 mb-4">
@@ -102,12 +114,16 @@ export default function LandingPage() {
                     >
                       <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: c.accent }} />
                     </span>
-                    <p className="text-base font-extrabold text-white group-hover:text-rose-300 transition-colors tracking-tight">{f.title}</p>
+                    {/* Hover text diubah dari rose-300 ke cyan-300 agar klop dengan tema */}
+                    <p className="text-base font-extrabold text-white group-hover:text-cyan-300 transition-colors tracking-tight">
+                      {f.title}
+                    </p>
                   </div>
                   <p className="text-xs text-slate-400 font-semibold leading-relaxed">{f.desc}</p>
                 </div>
+
                 <div className="pt-4 flex items-center justify-between border-t border-white/5">
-                  <span className="text-[10px] font-black uppercase tracking-wider text-slate-500 group-hover:text-white transition-colors">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-slate-500 group-hover:text-slate-200 transition-colors">
                     Pelajari Fitur
                   </span>
                   <span className="text-xs font-black transition-transform group-hover:translate-x-1" style={{ color: c.accent }}>
