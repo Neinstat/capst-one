@@ -50,44 +50,44 @@ export default function PdfDropzone({
         <div
           {...getRootProps()}
           className={`
-            relative border-2 border-dashed rounded-xl p-8 text-center cursor-pointer
+            relative border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer
             transition-all duration-200
             ${isDragActive
-              ? 'border-blue-500/50 bg-blue-500/5'
-              : 'border-white/10 bg-slate-900/60 hover:border-white/20 hover:bg-slate-800/60'
+              ? 'border-blue-500 bg-blue-500/10 shadow-inner'
+              : 'border-blue-200/70 bg-blue-50/20 hover:border-blue-500/40 hover:bg-blue-50/45'
             }
             ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
           `}
         >
           <input {...getInputProps()} />
           <div className="flex flex-col items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-slate-800 border border-white/10 flex items-center justify-center">
-              <UploadIcon className="w-5 h-5 text-slate-400" />
+            <div className="w-12 h-12 rounded-full bg-blue-50/70 border border-blue-100/60 flex items-center justify-center shadow-sm">
+              <UploadIcon className="w-5 h-5 text-blue-600" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-slate-300">{label}</p>
-              <p className="text-xs text-slate-500 mt-1">{hint}</p>
-              <p className="text-xs text-slate-600 mt-0.5">Maksimal {maxMb}MB • Format PDF</p>
+              <p className="text-sm font-extrabold text-blue-900">{label}</p>
+              <p className="text-xs text-blue-800/80 mt-1 font-semibold">{hint}</p>
+              <p className="text-[11px] text-blue-600/70 mt-1 font-bold">Maksimal {maxMb}MB • Format PDF</p>
             </div>
           </div>
         </div>
       ) : (
-        <div className="flex items-center gap-3 px-4 py-3 border border-emerald-500/20 bg-emerald-500/5 rounded-xl">
-          <div className="w-9 h-9 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center flex-shrink-0">
-            <PdfIcon className="w-5 h-5 text-red-400" />
+        <div className="flex items-center gap-3 px-4 py-3 border border-emerald-500/25 bg-emerald-500/5 rounded-2xl">
+          <div className="w-9 h-9 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center flex-shrink-0">
+            <PdfIcon className="w-5 h-5 text-rose-500" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-slate-200 truncate">{file.name}</p>
-            <p className="text-xs text-slate-500">{formatFileSize(file.size)}</p>
+            <p className="text-sm font-bold text-spark-primary truncate">{file.name}</p>
+            <p className="text-xs text-spark-secondary font-semibold">{formatFileSize(file.size)}</p>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-xs text-emerald-400 font-semibold flex items-center gap-1">
+            <span className="text-xs text-emerald-600 dark:text-emerald-400 font-extrabold flex items-center gap-1">
               <CheckIcon className="w-3.5 h-3.5" />
               Valid
             </span>
             <button
               onClick={handleRemove}
-              className="p-1 rounded-md text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+              className="p-1.5 rounded-lg text-spark-secondary hover:text-rose-500 hover:bg-rose-500/10 transition-colors"
             >
               <XIcon className="w-4 h-4" />
             </button>
@@ -96,7 +96,7 @@ export default function PdfDropzone({
       )}
 
       {error && (
-        <div className="mt-2 flex items-center gap-2 text-red-400 text-sm">
+        <div className="mt-2.5 flex items-center gap-2 text-rose-600 dark:text-rose-400 text-xs font-bold">
           <AlertIcon className="w-4 h-4 flex-shrink-0" />
           <p>{error}</p>
         </div>
@@ -115,13 +115,13 @@ export function ProcessingState({ steps, currentStep = 0 }) {
         return (
           <div key={step} className="flex items-center gap-3">
             <div
-              className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-semibold
-                ${done ? 'bg-emerald-500 text-white' : active ? 'bg-blue-500 text-white' : 'bg-slate-800 text-slate-500'}
+              className={`w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0 text-[10px] font-extrabold
+                ${done ? 'bg-emerald-500 text-white shadow-sm' : active ? 'bg-blue-600 text-white shadow-md' : 'bg-slate-100 dark:bg-slate-800 text-spark-muted border border-spark-border'}
               `}
             >
-              {done ? <CheckIcon className="w-3.5 h-3.5" /> : idx + 1}
+              {done ? <CheckIcon className="w-3 h-3" /> : idx + 1}
             </div>
-            <span className={`text-sm ${active ? 'text-slate-200 font-semibold' : done ? 'text-slate-500' : 'text-slate-600'}`}>
+            <span className={`text-xs ${active ? 'text-spark-primary font-bold' : done ? 'text-spark-secondary font-semibold' : 'text-spark-muted font-medium'}`}>
               {step}
             </span>
             {active && (
@@ -129,7 +129,7 @@ export function ProcessingState({ steps, currentStep = 0 }) {
                 {[0, 1, 2].map((i) => (
                   <div
                     key={i}
-                    className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce"
+                    className="w-1.5 h-1.5 bg-blue-600 rounded-full animate-bounce"
                     style={{ animationDelay: `${i * 150}ms` }}
                   />
                 ))}
@@ -145,12 +145,12 @@ export function ProcessingState({ steps, currentStep = 0 }) {
 // ── File validity banner ───────────────────────────────────────────────────────
 export function FileValidityBanner({ type = 'error', message }) {
   const styles = {
-    error: 'bg-red-500/10 border-red-500/20 text-red-400',
-    warning: 'bg-amber-500/10 border-amber-500/20 text-amber-400',
-    info: 'bg-blue-500/10 border-blue-500/20 text-blue-400',
+    error: 'bg-rose-500/10 border-rose-500/20 text-rose-600 dark:text-rose-400',
+    warning: 'bg-amber-500/10 border-amber-500/20 text-amber-600 dark:text-amber-400',
+    info: 'bg-blue-500/10 border-blue-500/20 text-blue-600 dark:text-blue-400',
   }
   return (
-    <div className={`flex items-start gap-3 px-4 py-3 border rounded-lg ${styles[type]}`}>
+    <div className={`flex items-start gap-3 px-4 py-3 border rounded-2xl ${styles[type]} text-xs font-semibold`}>
       <AlertIcon className="w-4 h-4 flex-shrink-0 mt-0.5" />
       <p className="text-sm">{message}</p>
     </div>

@@ -10,8 +10,10 @@ import OpportunityBoardPage from "./pages/OpportunityBoardPage";
 import CvReviewerPage from "./pages/CvReviewerPage";
 import SksChatbotPage from "./pages/SksChatbotPage";
 import AdminPage from "./pages/AdminPage";
-import ProfilePage from "./pages/ProfilePage"; // 🚨 PERBAIKAN 1: Import Halaman Profil Baru
+import ProfilePage from "./pages/ProfilePage";
+import OurTeamPage from "./pages/OurTeamPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import HomePage from "./pages/HomePage";
 
 import { useAuthStore } from "./store/authStore";
 
@@ -51,22 +53,23 @@ export default function App() {
 
           {/* Rute Terproteksi Login Global */}
           <Route
-            path="/"
             element={
               <ProtectedRoute>
                 <MainLayout />
               </ProtectedRoute>
             }
           >
-            <Route path="academic-mapper" element={<AcademicMapperPage />} />
-            <Route path="semester-planner" element={<SemesterPlannerPage />} />
+            <Route path="/home" element={<HomePage />} />
+            <Route path="/academic-mapper" element={<AcademicMapperPage />} />
+            <Route path="/semester-planner" element={<SemesterPlannerPage />} />
             <Route
-              path="opportunity-board"
+              path="/opportunity-board"
               element={<OpportunityBoardPage />}
             />
-            <Route path="cv-reviewer" element={<CvReviewerPage />} />
-            <Route path="sks-chatbot" element={<SksChatbotPage />} />
-            <Route path="profile" element={<ProfilePage />} />
+            <Route path="/cv-reviewer" element={<CvReviewerPage />} />
+            <Route path="/sks-chatbot" element={<SksChatbotPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/our-team" element={<OurTeamPage />} />
 
             {/* 🚨 PERBAIKAN 4: Bungkus rute admin menggunakan AdminRoute agar berlapis keamanannya */}
             <Route

@@ -47,7 +47,7 @@ export const useUploadStore = create((set) => ({
 export const useUIStore = create((set) => ({
   sidebarOpen: true,
   activeModal: null,
-  theme: localStorage.getItem("spark-theme") || "dark",
+  theme: localStorage.getItem("spark-theme") || "light",
 
   toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),
   openModal: (name) => set({ activeModal: name }),
@@ -57,6 +57,11 @@ export const useUIStore = create((set) => ({
       const nextTheme = state.theme === "dark" ? "light" : "dark";
       localStorage.setItem("spark-theme", nextTheme);
       document.documentElement.setAttribute("data-theme", nextTheme);
+      if (nextTheme === "dark") {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
       return { theme: nextTheme };
     }),
 }));

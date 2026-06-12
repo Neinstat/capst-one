@@ -7,7 +7,7 @@ import {
   ResponsiveContainer,
   Tooltip,
 } from 'recharts'
-import { Info, Upload, Sparkles, RefreshCw } from 'lucide-react'
+import { Info, Sparkles, RefreshCw, CheckCircle2 } from 'lucide-react'
 import PdfDropzone from '../components/shared/PdfDropzone'
 import { useAuthStore } from '../store/authStore'
 
@@ -82,22 +82,23 @@ export default function AcademicMapperPage() {
   }
 
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-8 animate-scale-in">
+    <div className="p-6 max-w-6xl mx-auto space-y-8 animate-scale-in text-spark-primary">
       {/* Premium Hero Banner */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-950 via-slate-900 to-emerald-950 text-white p-8 md:p-10 shadow-2xl border border-white/5">
-        <div className="absolute -top-24 -right-24 w-72 h-72 bg-emerald-500/20 rounded-full blur-[80px] pointer-events-none animate-pulse" />
+      <div className="relative overflow-hidden rounded-3xl spark-banner p-8 md:p-10 shadow-xl border">
+        {/* Glow Spheres */}
+        <div className="absolute -top-24 -right-24 w-72 h-72 bg-blue-500/10 rounded-full blur-[80px] pointer-events-none animate-pulse" />
         <div className="absolute -bottom-24 -left-12 w-96 h-96 bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none animate-pulse" />
 
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
           <div className="space-y-3">
-            <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[10px] font-bold bg-white/10 backdrop-blur-md text-emerald-200 border border-white/10 uppercase tracking-widest">
-              <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+            <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[10px] font-extrabold bg-amber-400 text-blue-900 border border-amber-500/35 uppercase tracking-widest shadow-sm">
+              <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping" />
               AI-Powered Analysis
             </span>
-            <h1 className="text-3xl md:text-4xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-emerald-100 to-indigo-100">
+            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">
               Academic Mapper
             </h1>
-            <p className="text-sm text-slate-300 max-w-xl font-medium leading-relaxed">
+            <p className="text-sm text-spark-secondary max-w-xl font-medium leading-relaxed">
               Upload transkrip nilaimu, dan biarkan AI memetakan skill akademikmu ke jalur karir yang paling relevan di industri teknologi.
             </p>
           </div>
@@ -105,7 +106,7 @@ export default function AcademicMapperPage() {
           {step === 'result' && (
             <button
               onClick={() => { setStep('upload'); setFile(null); setProcessingStep(0) }}
-              className="flex items-center gap-2 px-6 py-4 bg-white/10 backdrop-blur-md hover:bg-white/20 text-white rounded-2xl text-sm font-bold border border-white/20 hover:scale-[1.02] active:scale-95 transition-all flex-shrink-0"
+              className="flex items-center gap-2 px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-sm font-bold shadow-lg shadow-blue-500/15 hover:scale-[1.02] active:scale-95 transition-all flex-shrink-0"
             >
               <RefreshCw className="w-4 h-4" /> Analisis Ulang
             </button>
@@ -113,136 +114,138 @@ export default function AcademicMapperPage() {
         </div>
       </div>
 
-      {/* Upload Step */}
-      {step === 'upload' && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Card Kiri: Upload Area */}
-          <div className="bg-slate-900/40 backdrop-blur-md rounded-3xl border border-white/5 p-7 shadow-2xl flex flex-col justify-between">
-            <div>
-              <h2 className="text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-5">Upload Transkrip Nilai</h2>
-              <PdfDropzone onFile={setFile} label="Upload Transkrip PDF" />
-            </div>
-            {file && (
-              <button
-                onClick={handleUpload}
-                className="mt-6 w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white text-sm font-bold shadow-lg shadow-emerald-500/25 hover:scale-[1.01] active:scale-95 transition-all flex items-center justify-center gap-2"
-              >
-                <Sparkles className="w-4 h-4" /> Mulai Analisis AI
-              </button>
-            )}
-          </div>
-
-          {/* Card Kanan: Panduan Transkrip */}
-          <div className="bg-gradient-to-br from-indigo-950/30 to-emerald-950/20 border border-emerald-500/10 rounded-3xl p-7 backdrop-blur-sm shadow-2xl flex flex-col justify-between">
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
-                  <Info className="w-4 h-4 text-emerald-400" />
-                </div>
-                <h2 className="text-sm font-extrabold text-slate-200">Panduan Transkrip</h2>
-              </div>
-              <p className="text-xs font-semibold text-emerald-400/80 mb-5 leading-relaxed">
-                Mohon gunakan transkrip yang sesuai agar hasil analisis akurat.
-              </p>
-              <div className="space-y-3">
-                {[
-                  'Buka siakad myITS',
-                  'Masuk ke modul Laporan',
-                  'Pilih Transkrip Sementara',
-                  'Download dengan format Horizontal (.pdf)',
-                ].map((s, i) => (
-                  <div key={i} className="flex items-center gap-3 text-xs text-slate-300 font-semibold">
-                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-[11px] font-black text-emerald-400">
-                      {i + 1}
-                    </span>
-                    {s}
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="mt-6 pt-4 border-t border-white/5">
-              <p className="text-[11px] text-slate-400 italic leading-relaxed">
-                * Sistem menyamarkan data sensitif sebelum diproses AI untuk keamanan Anda.
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Processing Step */}
-      {step === 'processing' && (
-        <div className="bg-slate-900/50 backdrop-blur-md rounded-3xl border border-white/5 p-12 text-center max-w-md mx-auto shadow-2xl animate-scale-in">
-          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center mx-auto mb-6 shadow-lg shadow-emerald-500/20">
-            <div className="w-8 h-8 rounded-full border-2 border-white border-t-transparent animate-spin" style={{ borderWidth: 3 }} />
-          </div>
-          <h3 className="text-base font-extrabold text-slate-100 mb-2">Sedang Memproses...</h3>
-          <p className="text-sm font-semibold text-emerald-400 mb-8">{PROCESSING_STEPS[processingStep]}</p>
-          <div className="flex items-center justify-center gap-2">
-            {PROCESSING_STEPS.map((s, i) => (
-              <div key={i} className="flex items-center gap-2">
-                <div className={`w-2.5 h-2.5 rounded-full transition-all duration-500 ${i < processingStep ? 'bg-emerald-500' : i === processingStep ? 'bg-emerald-400 animate-pulse scale-125' : 'bg-slate-700'
-                  }`} />
-                {i < PROCESSING_STEPS.length - 1 && (
-                  <div className={`w-6 h-0.5 rounded-full transition-all duration-500 ${i < processingStep ? 'bg-emerald-400' : 'bg-slate-700'}`} />
-                )}
-              </div>
-            ))}
-          </div>
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-4">
-            Step {processingStep + 1} / {PROCESSING_STEPS.length}
-          </p>
-        </div>
-      )}
-
-      {/* Result Step */}
-      {step === 'result' && (
-        <div className="space-y-6 animate-scale-in">
-          {/* Stats Row */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <StatsCard label="Nama Mahasiswa" value={resultData.studentName} color="indigo" />
-            <StatsCard label="NRP" value={resultData.nrp} color="purple" />
-            <StatsCard label="GPA Transkrip" value={resultData.gpa} color="emerald" isGpa />
-          </div>
-
+      <div className="features-blue-container">
+        {/* Upload Step */}
+        {step === 'upload' && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Radar Chart */}
-            <div className="bg-slate-900/40 backdrop-blur-md rounded-3xl border border-white/5 p-7 shadow-2xl">
-              <h2 className="text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-6">Skills Assessment</h2>
-              <ResponsiveContainer width="100%" height={280}>
-                <RadarChart data={resultData.skillData}>
-                  <PolarGrid stroke="#334155" />
-                  <PolarAngleAxis dataKey="subject" tick={{ fontSize: 11, fill: '#94a3b8', fontWeight: 600 }} />
-                  <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderRadius: 12, border: '1px solid rgba(255,255,255,0.1)', fontSize: 12, color: '#f8fafc' }} />
-                  <Radar name="Skor" dataKey="score" stroke="#10b981" fill="#10b981" fillOpacity={0.15} strokeWidth={2} />
-                </RadarChart>
-              </ResponsiveContainer>
+            {/* Card Kiri: Upload Area */}
+            <div className="bg-spark-card rounded-3xl border p-7 shadow-lg flex flex-col justify-between">
+              <div>
+                <h2 className="text-xs font-extrabold text-spark-muted uppercase tracking-widest mb-5">Upload Transkrip Nilai</h2>
+                <PdfDropzone onFile={setFile} label="Upload Transkrip PDF" />
+              </div>
+              {file && (
+                <button
+                  onClick={handleUpload}
+                  className="mt-6 w-full py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold shadow-lg shadow-blue-500/20 hover:scale-[1.01] active:scale-95 transition-all flex items-center justify-center gap-2"
+                >
+                  <Sparkles className="w-4 h-4" /> Mulai Analisis AI
+                </button>
+              )}
             </div>
 
-            {/* Career Matches */}
-            <div className="bg-slate-900/40 backdrop-blur-md rounded-3xl border border-white/5 p-7 shadow-2xl">
-              <h2 className="text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-6">Rekomendasi Jalur Karir</h2>
-              <div className="space-y-5">
-                {resultData.careerMatches.map((career, i) => (
-                  <div key={i} className="group">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-sm font-extrabold text-slate-200">{career.role}</span>
-                      <span className="text-xs font-black px-2.5 py-1 rounded-lg" style={{ color: career.color, backgroundColor: `${career.color}18` }}>
-                        {career.match}% Match
-                      </span>
-                    </div>
-                    <div className="w-full bg-slate-950 h-2 rounded-full overflow-hidden border border-white/5">
-                      <div
-                        className="h-full rounded-full transition-all duration-1000"
-                        style={{ width: `${career.match}%`, backgroundColor: career.color }}
-                      />
-                    </div>
+            {/* Card Kanan: Panduan Transkrip */}
+            <div className="bg-spark-card rounded-3xl border p-7 shadow-lg flex flex-col justify-between">
+              <div>
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-8 h-8 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
+                    <Info className="w-4 h-4 text-blue-600" />
                   </div>
-                ))}
+                  <h2 className="text-sm font-extrabold text-spark-primary">Panduan Transkrip</h2>
+                </div>
+                <p className="text-xs font-semibold text-spark-secondary mb-5 leading-relaxed">
+                  Mohon gunakan transkrip yang sesuai agar hasil analisis akurat.
+                </p>
+                <div className="space-y-3">
+                  {[
+                    'Buka siakad myITS',
+                    'Masuk ke modul Laporan',
+                    'Pilih Transkrip Sementara',
+                    'Download dengan format Horizontal (.pdf)',
+                  ].map((s, i) => (
+                    <div key={i} className="flex items-center gap-3 text-xs text-spark-secondary font-semibold">
+                      <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-[11px] font-black text-blue-600">
+                        {i + 1}
+                      </span>
+                      {s}
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="mt-6 pt-4 border-t border-spark-border">
+                <p className="text-[11px] text-spark-muted italic leading-relaxed">
+                  * Sistem menyamarkan data sensitif sebelum diproses AI untuk keamanan Anda.
+                </p>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+
+        {/* Processing Step */}
+        {step === 'processing' && (
+          <div className="bg-spark-card rounded-3xl border p-12 text-center max-w-md mx-auto shadow-lg animate-scale-in">
+            <div className="w-16 h-16 rounded-full bg-blue-600 flex items-center justify-center mx-auto mb-6 shadow-lg shadow-blue-500/20">
+              <div className="w-8 h-8 rounded-full border-2 border-white border-t-transparent animate-spin" style={{ borderWidth: 3 }} />
+            </div>
+            <h3 className="text-base font-extrabold text-spark-primary mb-2">Sedang Memproses...</h3>
+            <p className="text-sm font-semibold text-blue-600 mb-8">{PROCESSING_STEPS[processingStep]}</p>
+            <div className="flex items-center justify-center gap-2">
+              {PROCESSING_STEPS.map((s, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <div className={`w-2.5 h-2.5 rounded-full transition-all duration-500 ${i < processingStep ? 'bg-blue-600' : i === processingStep ? 'bg-blue-500 animate-pulse scale-125' : 'bg-slate-300'
+                    }`} />
+                  {i < PROCESSING_STEPS.length - 1 && (
+                    <div className={`w-6 h-0.5 rounded-full transition-all duration-500 ${i < processingStep ? 'bg-blue-400' : 'bg-slate-300'}`} />
+                  )}
+                </div>
+              ))}
+            </div>
+            <p className="text-[10px] font-bold text-spark-muted uppercase tracking-widest mt-4">
+              Step {processingStep + 1} / {PROCESSING_STEPS.length}
+            </p>
+          </div>
+        )}
+
+        {/* Result Step */}
+        {step === 'result' && (
+          <div className="space-y-6 animate-scale-in">
+            {/* Stats Row */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <StatsCard label="Nama Mahasiswa" value={resultData.studentName} color="blue" />
+              <StatsCard label="NRP" value={resultData.nrp} color="indigo" />
+              <StatsCard label="GPA Transkrip" value={resultData.gpa} color="emerald" isGpa />
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Radar Chart */}
+              <div className="bg-spark-card rounded-3xl border p-7 shadow-lg">
+                <h2 className="text-xs font-extrabold text-spark-muted uppercase tracking-widest mb-6">Skills Assessment</h2>
+                <ResponsiveContainer width="100%" height={280}>
+                  <RadarChart data={resultData.skillData}>
+                    <PolarGrid stroke="var(--color-border)" />
+                    <PolarAngleAxis dataKey="subject" tick={{ fontSize: 11, fill: 'var(--color-text-secondary)', fontWeight: 600 }} />
+                    <Tooltip contentStyle={{ backgroundColor: 'var(--color-bg-card)', borderRadius: 12, border: '1px solid var(--color-border)', fontSize: 12, color: 'var(--color-text-primary)' }} />
+                    <Radar name="Skor" dataKey="score" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.15} strokeWidth={2} />
+                  </RadarChart>
+                </ResponsiveContainer>
+              </div>
+
+              {/* Career Matches */}
+              <div className="bg-spark-card rounded-3xl border p-7 shadow-lg">
+                <h2 className="text-xs font-extrabold text-spark-muted uppercase tracking-widest mb-6">Rekomendasi Jalur Karir</h2>
+                <div className="space-y-5">
+                  {resultData.careerMatches.map((career, i) => (
+                    <div key={i} className="group">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-sm font-extrabold text-spark-primary">{career.role}</span>
+                        <span className="text-xs font-black px-2.5 py-1 rounded-lg" style={{ color: career.color, backgroundColor: `${career.color}15` }}>
+                          {career.match}% Match
+                        </span>
+                      </div>
+                      <div className="w-full bg-slate-100 dark:bg-slate-950 h-2 rounded-full overflow-hidden border border-spark-border">
+                        <div
+                          className="h-full rounded-full transition-all duration-1000"
+                          style={{ width: `${career.match}%`, backgroundColor: career.color }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Animations */}
       <style>{`
@@ -258,16 +261,11 @@ export default function AcademicMapperPage() {
   )
 }
 
-function StatsCard({ label, value, isGpa, color }) {
-  const colorMap = {
-    indigo: 'from-indigo-950/40 to-slate-900/40 border-indigo-500/10 text-indigo-400',
-    purple: 'from-purple-950/40 to-slate-900/40 border-purple-500/10 text-purple-400',
-    emerald: 'from-emerald-950/40 to-slate-900/40 border-emerald-500/10 text-emerald-400',
-  }
+function StatsCard({ label, value, isGpa }) {
   return (
-    <div className={`bg-gradient-to-br ${colorMap[color]} backdrop-blur-md rounded-3xl border p-6 shadow-xl`}>
-      <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">{label}</p>
-      <p className={`text-2xl font-black mt-3 truncate ${isGpa ? 'text-emerald-400' : 'text-slate-100'}`}>
+    <div className="bg-spark-card border rounded-3xl p-6 shadow-md">
+      <p className="text-[10px] font-extrabold text-spark-muted uppercase tracking-widest">{label}</p>
+      <p className={`text-2xl font-black mt-3 truncate ${isGpa ? 'text-emerald-500' : 'text-spark-primary'}`}>
         {value}
       </p>
     </div>

@@ -75,143 +75,166 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-6">
-      {/* 1. KARTU INFORMASI IDENTITAS USER */}
-      <div className="bg-white border rounded-2xl p-6 shadow-sm flex flex-col sm:flex-row items-center gap-5">
-        <div className="w-16 h-16 rounded-full bg-slate-900 text-white flex items-center justify-center font-black text-xl shadow-inner flex-shrink-0">
-          {user?.nama?.charAt(0) || "U"}
-        </div>
-        <div className="flex-1 text-center sm:text-left min-w-0">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-            <h2 className="text-xl font-bold text-gray-900 truncate">
-              {user?.nama || "Nama Pengguna"}
-            </h2>
-            <span className="w-fit mx-auto sm:mx-0 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-indigo-50 text-indigo-600 border border-indigo-100">
-              {user?.role || "mahasiswa"}
+    <div className="p-6 max-w-4xl mx-auto space-y-6 animate-scale-in text-spark-primary">
+      {/* Hero Banner */}
+      <div className="relative overflow-hidden rounded-3xl spark-banner p-6 md:p-8 shadow-xl border flex-shrink-0">
+        <div className="absolute -top-24 -right-24 w-72 h-72 bg-amber-500/20 rounded-full blur-[80px] pointer-events-none animate-pulse" />
+        <div className="absolute -bottom-24 -left-12 w-96 h-96 bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none animate-pulse" />
+
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+          <div className="space-y-2">
+            <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[10px] font-extrabold bg-amber-400 text-blue-900 border border-amber-500/35 uppercase tracking-widest shadow-sm">
+              <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping" />
+              User Profile
             </span>
-          </div>
-          <p className="text-sm font-mono text-gray-500 mt-0.5">
-            NRP / Username: {user?.nrp || "Tidak Ada"}
-          </p>
-          {user?.semester && (
-            <p className="text-xs text-gray-400 mt-1">
-              Status Akademik: Mahasiswa Aktif (Semester {user.semester})
+            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">
+              Profil Saya
+            </h1>
+            <p className="text-xs text-spark-secondary max-w-xl font-medium leading-relaxed">
+              Kelola informasi akun Anda, detail akademik, dan perbarui password keamanan secara berkala.
             </p>
-          )}
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* 2. PANEL DETAIL AKUN */}
-        <div className="bg-white border rounded-2xl p-5 shadow-sm space-y-4 h-fit">
-          <h3 className="text-xs font-black text-gray-400 uppercase tracking-wider flex items-center gap-2">
-            <User className="w-4 h-4 text-gray-400" /> Detail Profil
-          </h3>
-          <div className="space-y-3 text-xs">
-            <div>
-              <span className="block text-gray-400 font-medium">
-                Fakultas / Departemen
-              </span>
-              <span className="font-semibold text-gray-800">
-                Teknologi Elektro dan Informatika Cerdas (FTEIC)
-              </span>
-            </div>
-            <div>
-              <span className="block text-gray-400 font-medium">Institusi</span>
-              <span className="font-semibold text-gray-800">
-                Institut Teknologi Sepuluh Nopember
+      <div className="features-blue-container space-y-6">
+        {/* 1. KARTU INFORMASI IDENTITAS USER */}
+        <div className="bg-spark-card border rounded-3xl p-6 shadow-md flex flex-col sm:flex-row items-center gap-5">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-cyan-500 text-white flex items-center justify-center font-black text-xl shadow-md flex-shrink-0">
+            {user?.nama?.charAt(0) || "U"}
+          </div>
+          <div className="flex-1 text-center sm:text-left min-w-0">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+              <h2 className="text-xl font-extrabold text-spark-primary truncate">
+                {user?.nama || "Nama Pengguna"}
+              </h2>
+              <span className="w-fit mx-auto sm:mx-0 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-blue-500/10 text-blue-600 border border-blue-500/25">
+                {user?.role || "mahasiswa"}
               </span>
             </div>
+            <p className="text-xs font-mono text-spark-secondary mt-1">
+              NRP / Username: {user?.nrp || "Tidak Ada"}
+            </p>
+            {user?.semester && (
+              <p className="text-xs text-spark-muted mt-1 font-semibold">
+                Status Akademik: Mahasiswa Aktif (Semester {user.semester})
+              </p>
+            )}
           </div>
         </div>
 
-        {/* 3. FORM GANTI PASSWORD */}
-        <div className="md:col-span-2 bg-white border rounded-2xl p-5 shadow-sm space-y-4">
-          <h3 className="text-xs font-black text-gray-400 uppercase tracking-wider flex items-center gap-2">
-            <Key className="w-4 h-4 text-gray-400" /> Pusat Keamanan Akun
-          </h3>
-          <p className="text-xs text-gray-500 leading-relaxed">
-            Demi menjaga privasi data Capstone, disarankan untuk memperbarui
-            password bawaan NRP Anda secara berkala.
-          </p>
-
-          {/* Toast / Alert Notification */}
-          {message.text && (
-            <div
-              className={`flex items-start gap-2.5 p-3.5 rounded-xl text-xs font-semibold ${
-                message.type === "success"
-                  ? "bg-green-50 text-green-700 border border-green-100"
-                  : "bg-red-50 text-red-700 border border-red-100"
-              }`}
-            >
-              {message.type === "success" ? (
-                <CheckCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
-              ) : (
-                <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
-              )}
-              <span>{message.text}</span>
-            </div>
-          )}
-
-          <form onSubmit={handleChangePassword} className="space-y-4">
-            <div>
-              <label className="block text-[10px] font-extrabold text-gray-400 uppercase mb-1">
-                Password Saat Ini
-              </label>
-              <input
-                required
-                type="password"
-                placeholder="Masukkan password lama / NRP Anda"
-                className="w-full px-3 py-2 border rounded-xl text-xs font-semibold bg-gray-50/30 focus:bg-white focus:ring-1 focus:ring-indigo-500 outline-none transition-all"
-                value={passwordLama}
-                onChange={(e) => setPasswordLama(e.target.value)}
-              />
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* 2. PANEL DETAIL AKUN */}
+          <div className="bg-spark-card border rounded-3xl p-5 shadow-md space-y-4 h-fit">
+            <h3 className="text-xs font-extrabold text-spark-muted uppercase tracking-wider flex items-center gap-2">
+              <User className="w-4 h-4 text-blue-500" /> Detail Profil
+            </h3>
+            <div className="space-y-3 text-xs font-semibold">
               <div>
-                <label className="block text-[10px] font-extrabold text-gray-400 uppercase mb-1">
-                  Password Baru
+                <span className="block text-spark-muted font-medium mb-0.5">
+                  Fakultas / Departemen
+                </span>
+                <span className="text-spark-primary leading-relaxed">
+                  Teknologi Elektro dan Informatika Cerdas (FTEIC)
+                </span>
+              </div>
+              <div>
+                <span className="block text-spark-muted font-medium mb-0.5">Institusi</span>
+                <span className="text-spark-primary">
+                  Institut Teknologi Sepuluh Nopember
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* 3. FORM GANTI PASSWORD */}
+          <div className="md:col-span-2 bg-spark-card border rounded-3xl p-5 shadow-md space-y-4">
+            <h3 className="text-xs font-extrabold text-spark-muted uppercase tracking-wider flex items-center gap-2">
+              <Key className="w-4 h-4 text-blue-500" /> Pusat Keamanan Akun
+            </h3>
+            <p className="text-xs text-spark-secondary leading-relaxed font-semibold">
+              Demi menjaga privasi data Capstone, disarankan untuk memperbarui
+              password bawaan NRP Anda secara berkala.
+            </p>
+
+            {/* Toast / Alert Notification */}
+            {message.text && (
+              <div
+                className={`flex items-start gap-2.5 p-3.5 rounded-xl text-xs font-semibold border ${
+                  message.type === "success"
+                    ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
+                    : "bg-rose-500/10 text-rose-600 border-rose-500/20"
+                }`}
+              >
+                {message.type === "success" ? (
+                  <CheckCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                ) : (
+                  <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                )}
+                <span>{message.text}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleChangePassword} className="space-y-4">
+              <div>
+                <label className="block text-[10px] font-extrabold text-spark-muted uppercase mb-1">
+                  Password Saat Ini
                 </label>
                 <input
                   required
                   type="password"
-                  placeholder="Minimal 6 karakter"
-                  className="w-full px-3 py-2 border rounded-xl text-xs font-semibold bg-gray-50/30 focus:bg-white focus:ring-1 focus:ring-indigo-500 outline-none transition-all"
-                  value={passwordBaru}
-                  onChange={(e) => setPasswordBaru(e.target.value)}
+                  placeholder="Masukkan password lama / NRP Anda"
+                  className="w-full px-4 py-2.5 border border-spark-border rounded-xl text-xs font-semibold bg-slate-50/30 focus:bg-white focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 outline-none transition-all text-spark-primary"
+                  value={passwordLama}
+                  onChange={(e) => setPasswordLama(e.target.value)}
                 />
               </div>
-              <div>
-                <label className="block text-[10px] font-extrabold text-gray-400 uppercase mb-1">
-                  Konfirmasi Password Baru
-                </label>
-                <input
-                  required
-                  type="password"
-                  placeholder="Ulangi password baru"
-                  className="w-full px-3 py-2 border rounded-xl text-xs font-semibold bg-gray-50/30 focus:bg-white focus:ring-1 focus:ring-indigo-500 outline-none transition-all"
-                  value={konfirmasiPassword}
-                  onChange={(e) => setKonfirmasiPassword(e.target.value)}
-                />
-              </div>
-            </div>
 
-            <button
-              disabled={loading}
-              type="submit"
-              className="w-full sm:w-auto px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold shadow-sm flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  Memperbarui...
-                </>
-              ) : (
-                "Perbarui Password"
-              )}
-            </button>
-          </form>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[10px] font-extrabold text-spark-muted uppercase mb-1">
+                    Password Baru
+                  </label>
+                  <input
+                    required
+                    type="password"
+                    placeholder="Minimal 6 karakter"
+                    className="w-full px-4 py-2.5 border border-spark-border rounded-xl text-xs font-semibold bg-slate-50/30 focus:bg-white focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 outline-none transition-all text-spark-primary"
+                    value={passwordBaru}
+                    onChange={(e) => setPasswordBaru(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-extrabold text-spark-muted uppercase mb-1">
+                    Konfirmasi Password Baru
+                  </label>
+                  <input
+                    required
+                    type="password"
+                    placeholder="Ulangi password baru"
+                    className="w-full px-4 py-2.5 border border-spark-border rounded-xl text-xs font-semibold bg-slate-50/30 focus:bg-white focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 outline-none transition-all text-spark-primary"
+                    value={konfirmasiPassword}
+                    onChange={(e) => setKonfirmasiPassword(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <button
+                disabled={loading}
+                type="submit"
+                className="w-full sm:w-auto px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-md shadow-blue-500/10 flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    Memperbarui...
+                  </>
+                ) : (
+                  "Perbarui Password"
+                )}
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </div>
