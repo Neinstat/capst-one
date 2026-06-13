@@ -115,7 +115,7 @@ export default function LandingPage() {
   }
 
   return (
-    <div className="w-full h-screen overflow-y-auto bg-gradient-to-r from-[rgb(209,243,254)] to-[rgb(243,251,255)] text-[#0f172a] font-sans scroll-smooth relative selection:bg-blue-600/10 selection:text-blue-600">
+    <div className="w-full h-screen overflow-y-auto bg-gradient-to-r from-[rgb(209,231,254)] to-[rgb(251,252,255)] text-[#0f172a] font-sans scroll-smooth relative selection:bg-blue-600/10 selection:text-blue-600">
 
       {/* Decorative Blur Background Gradients */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[600px] bg-gradient-to-b from-blue-50/70 via-sky-50/30 to-transparent pointer-events-none -z-10" />
@@ -348,11 +348,11 @@ export default function LandingPage() {
 
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-full bg-emerald-500 flex items-center justify-center text-white font-extrabold text-sm border border-white shadow-md">
-                    AF
+                    W
                   </div>
                   <div>
-                    <h5 className="text-sm font-black text-slate-900">Anna Franklin</h5>
-                    <p className="text-xs text-slate-500 font-semibold">Alumni Teknologi Informasi ITS</p>
+                    <h5 className="text-sm font-black text-slate-900">Wahyu Andhika Rizaldi</h5>
+                    <p className="text-xs text-slate-500 font-semibold">Alumni Teknologi Informasi ITS (Angkatan 2021)</p>
                   </div>
                 </div>
               </div>

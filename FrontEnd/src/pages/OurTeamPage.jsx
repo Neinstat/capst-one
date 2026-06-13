@@ -39,7 +39,7 @@ export default function OurTeamPage() {
     {
       name: "Nabiel Nizar Anwari",
       nrp: "5027231087",
-      role: "UI/UX Designer",
+      role: "AI Engineer",
       desc: "Membangun pipeline AI untuk fitur Akademic Mapper, Semester Planner, CV Reviewer.",
       avatar: "AI",
       gradient: "from-blue-600 to-blue-800",

@@ -44,7 +44,7 @@ export default function LoginPage() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden font-sans bg-gradient-to-r from-[rgb(209,243,254)] to-[rgb(243,251,255)]"
+      className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden font-sans bg-gradient-to-r  from-[rgb(209,231,254)] to-[rgb(251,252,255)]"
     >
       {/* Decorative Blur Background Gradients */}
       <div className="absolute top-10 right-10 w-80 h-80 bg-blue-200/40 rounded-full blur-[100px] pointer-events-none z-0 animate-pulse-glow" />
