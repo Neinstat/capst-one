@@ -28,7 +28,7 @@ export default function HomePage() {
 
           <div className="space-y-4 text-sm md:text-base text-spark-secondary font-semibold leading-relaxed">
             <p>
-              Platform akademik cerdas untuk memfasilitasi kebutuhan studi, pemetaan skill, dan perencanaan karir mahasiswa Departemen Teknologi Informasi ITS.
+              SPARK DTI adalah platform akademik cerdas untuk memfasilitasi kebutuhan studi, pemetaan skill, dan perencanaan karir mahasiswa Departemen Teknologi Informasi ITS.
             </p>
             <p>
               Tersedia pilihan 5 fitur utama yang dapat Anda gunakan secara bebas. Silakan gunakan <strong>side panel</strong> di bagian kiri untuk mempermudah akses langsung dari satu fitur ke fitur lainnya.
