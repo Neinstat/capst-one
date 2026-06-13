@@ -194,6 +194,15 @@ export default function MainLayout() {
 
       {/* Lower body container - sidebar on left, content on right */}
       <div className={`flex-1 flex overflow-hidden min-h-0 relative z-10 bg-slate-950/10 ${location.pathname !== "/home" && location.pathname !== "/" ? "has-grid-bg" : ""}`}>
+        {/* Glow khusus Menu Utama (Home Page) di bawah sidebar & content area agar tidak terpotong */}
+        {(location.pathname === "/home" || location.pathname === "/") && (
+          <div
+            className="absolute inset-0 pointer-events-none z-0 overflow-hidden"
+            style={{
+              background: "radial-gradient(circle at 15% 15%, rgba(14, 165, 233, 0.25) 0%, rgba(56, 189, 248, 0.14) 25%, rgba(59, 130, 246, 0.05) 50%, rgba(59, 130, 246, 0) 80%)"
+            }}
+          />
+        )}
         {/* Left Sidebar */}
         <aside
           className={`
@@ -241,13 +250,19 @@ export default function MainLayout() {
                     <NavLink
                       key={path}
                       to={path}
-                      className="flex items-center gap-3 px-1.5 py-1.5 rounded-xl transition-all duration-200 group"
+                      className={({ isActive }) =>
+                        `flex items-center rounded-xl transition-all duration-300 group ${sidebarOpen ? "gap-3 px-2 py-2" : "justify-center px-0 py-2"
+                        } ${isActive
+                          ? "bg-white/10 text-white"
+                          : "hover:bg-white/5 text-slate-400 hover:text-slate-200"
+                        }`
+                      }
                     >
                       {({ isActive }) => (
                         <>
                           {/* Modern Square Icon Badge — background only on the icon itself */}
                           <span
-                            className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-200"
+                            className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 text-slate-400"
                             style={{
                               backgroundColor: isActive
                                 ? colors.accent
@@ -255,15 +270,15 @@ export default function MainLayout() {
                             }}
                           >
                             <Icon
-                              className="w-4 h-4"
-                              style={{ color: isActive ? "#ffffff" : "#64748b" }}
+                              className="w-4 h-4 transition-colors duration-300"
+                              style={{ color: isActive ? "#ffffff" : undefined }}
                             />
                           </span>
                           {sidebarOpen && (
                             <span
-                              className="text-xs font-semibold truncate tracking-wide"
+                              className="text-xs font-semibold truncate tracking-wide transition-colors duration-300"
                               style={{
-                                color: isActive ? colors.accent : "#64748b",
+                                color: isActive ? colors.accent : undefined,
                               }}
                             >
                               {label}
@@ -282,7 +297,8 @@ export default function MainLayout() {
           <div className="border-t border-white/5 pt-5 mt-12">
             <button
               onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-all text-xs font-bold text-left"
+              className={`w-full flex items-center rounded-xl text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-all text-xs font-bold ${sidebarOpen ? "gap-3 px-3 py-2 text-left" : "justify-center px-0 py-2"
+                }`}
             >
               <LogoutIcon className="w-4 h-4" />
               {sidebarOpen && <span>Keluar</span>}

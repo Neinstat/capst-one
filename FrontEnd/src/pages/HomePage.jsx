@@ -4,10 +4,12 @@ export default function HomePage() {
   const user = useAuthStore((state) => state.user);
 
   return (
-    <div className="w-full h-full flex flex-col lg:flex-row items-center lg:items-end select-none animate-scale-in text-spark-primary">
+    <div className="w-full h-full flex flex-col lg:flex-row items-center lg:items-end select-none animate-scale-in text-spark-primary relative overflow-hidden">
+      
+
 
       {/* Left Side: Large Signpost Illustration touching the bottom and very close to the sidebar */}
-      <div className="w-full lg:w-[45%] h-[55vh] lg:h-full flex items-end justify-center flex-shrink-0 relative">
+      <div className="w-full lg:w-[45%] h-[55vh] lg:h-full flex items-end justify-center flex-shrink-0 relative z-10">
         <img
           src="/Palang Fitur SPARK DTI.png"
           alt="Palang Fitur SPARK DTI"
@@ -16,7 +18,7 @@ export default function HomePage() {
       </div>
 
       {/* Right Side: Welcome Greeting and Spacious Guide Text */}
-      <div className="w-full lg:flex-1 h-auto lg:h-full flex flex-col justify-center p-8 lg:pl-32 xl:pl-40 lg:pr-16 lg:py-14 text-left">
+      <div className="w-full lg:flex-1 h-auto lg:h-full flex flex-col justify-center p-8 lg:pl-32 xl:pl-40 lg:pr-16 lg:py-14 text-left relative z-10">
         <div className="space-y-6 max-w-xl">
           <div className="space-y-4">
             <h1 className="text-4xl md:text-5xl font-black tracking-tight text-slate-100 dark:text-white leading-tight">

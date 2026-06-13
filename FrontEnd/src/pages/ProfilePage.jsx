@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAuthStore } from "../store/authStore";
-import { User, Key, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
+import { User, Key, CheckCircle, AlertCircle, Loader2, Eye, EyeOff } from "lucide-react";
 
 export default function ProfilePage() {
   // Ambil data user aktif dan token JWT langsung dari Zustand Store
@@ -11,6 +11,11 @@ export default function ProfilePage() {
   const [passwordLama, setPasswordLama] = useState("");
   const [passwordBaru, setPasswordBaru] = useState("");
   const [konfirmasiPassword, setKonfirmasiPassword] = useState("");
+
+  // State untuk visibilitas password
+  const [showPasswordLama, setShowPasswordLama] = useState(false);
+  const [showPasswordBaru, setShowPasswordBaru] = useState(false);
+  const [showKonfirmasiPassword, setShowKonfirmasiPassword] = useState(false);
 
   // State untuk UI feedback
   const [loading, setLoading] = useState(false);
@@ -115,11 +120,9 @@ export default function ProfilePage() {
             <p className="text-xs font-mono text-spark-secondary mt-1">
               NRP / Username: {user?.nrp || "Tidak Ada"}
             </p>
-            {user?.semester && (
-              <p className="text-xs text-spark-muted mt-1 font-semibold">
-                Status Akademik: Mahasiswa Aktif (Semester {user.semester})
-              </p>
-            )}
+            <p className="text-xs text-spark-muted mt-1 font-semibold">
+              Status Akademik: {user?.role === "alumni" ? "Alumni" : user?.role === "admin" ? "Dosen, Admin" : "Mahasiswa Aktif"}
+            </p>
           </div>
         </div>
 
@@ -180,14 +183,27 @@ export default function ProfilePage() {
                 <label className="block text-[10px] font-extrabold text-spark-muted uppercase mb-1">
                   Password Saat Ini
                 </label>
-                <input
-                  required
-                  type="password"
-                  placeholder="Masukkan password lama / NRP Anda"
-                  className="w-full px-4 py-2.5 border border-spark-border rounded-xl text-xs font-semibold bg-slate-50/30 focus:bg-white focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 outline-none transition-all text-spark-primary"
-                  value={passwordLama}
-                  onChange={(e) => setPasswordLama(e.target.value)}
-                />
+                <div className="relative">
+                  <input
+                    required
+                    type={showPasswordLama ? "text" : "password"}
+                    placeholder="Masukkan password lama / NRP Anda"
+                    className="w-full pl-4 pr-11 py-2.5 border border-spark-border rounded-xl text-xs font-semibold bg-slate-50/30 focus:bg-white focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 outline-none transition-all text-spark-primary"
+                    value={passwordLama}
+                    onChange={(e) => setPasswordLama(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPasswordLama(!showPasswordLama)}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none transition-colors"
+                  >
+                    {showPasswordLama ? (
+                      <EyeOff className="w-4 h-4" />
+                    ) : (
+                      <Eye className="w-4 h-4" />
+                    )}
+                  </button>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -195,27 +211,53 @@ export default function ProfilePage() {
                   <label className="block text-[10px] font-extrabold text-spark-muted uppercase mb-1">
                     Password Baru
                   </label>
-                  <input
-                    required
-                    type="password"
-                    placeholder="Minimal 6 karakter"
-                    className="w-full px-4 py-2.5 border border-spark-border rounded-xl text-xs font-semibold bg-slate-50/30 focus:bg-white focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 outline-none transition-all text-spark-primary"
-                    value={passwordBaru}
-                    onChange={(e) => setPasswordBaru(e.target.value)}
-                  />
+                  <div className="relative">
+                    <input
+                      required
+                      type={showPasswordBaru ? "text" : "password"}
+                      placeholder="Minimal 6 karakter"
+                      className="w-full pl-4 pr-11 py-2.5 border border-spark-border rounded-xl text-xs font-semibold bg-slate-50/30 focus:bg-white focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 outline-none transition-all text-spark-primary"
+                      value={passwordBaru}
+                      onChange={(e) => setPasswordBaru(e.target.value)}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPasswordBaru(!showPasswordBaru)}
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none transition-colors"
+                    >
+                      {showPasswordBaru ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
+                    </button>
+                  </div>
                 </div>
                 <div>
                   <label className="block text-[10px] font-extrabold text-spark-muted uppercase mb-1">
                     Konfirmasi Password Baru
                   </label>
-                  <input
-                    required
-                    type="password"
-                    placeholder="Ulangi password baru"
-                    className="w-full px-4 py-2.5 border border-spark-border rounded-xl text-xs font-semibold bg-slate-50/30 focus:bg-white focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 outline-none transition-all text-spark-primary"
-                    value={konfirmasiPassword}
-                    onChange={(e) => setKonfirmasiPassword(e.target.value)}
-                  />
+                  <div className="relative">
+                    <input
+                      required
+                      type={showKonfirmasiPassword ? "text" : "password"}
+                      placeholder="Ulangi password baru"
+                      className="w-full pl-4 pr-11 py-2.5 border border-spark-border rounded-xl text-xs font-semibold bg-slate-50/30 focus:bg-white focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 outline-none transition-all text-spark-primary"
+                      value={konfirmasiPassword}
+                      onChange={(e) => setKonfirmasiPassword(e.target.value)}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowKonfirmasiPassword(!showKonfirmasiPassword)}
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none transition-colors"
+                    >
+                      {showKonfirmasiPassword ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
+                    </button>
+                  </div>
                 </div>
               </div>
 

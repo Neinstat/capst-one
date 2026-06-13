@@ -2,7 +2,8 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { useAuthStore } from "../store/authStore";
 import {
   Users, UserPlus, Shield, Trash2, Edit2, Loader2, X,
-  FileSpreadsheet, UploadCloud, CheckCircle2, AlertCircle, Eye, Search, Filter
+  FileSpreadsheet, UploadCloud, CheckCircle2, AlertCircle, Eye, Search, Filter,
+  HelpCircle
 } from "lucide-react";
 import * as XLSX from "xlsx";
 
@@ -18,6 +19,22 @@ export default function AdminPage() {
   const { token } = useAuthStore();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  // ── State Pop-up Notification Card ──────────────────────────────
+  const [notification, setNotification] = useState(null); 
+  // format: { type: "success" | "error" | "confirm", title: "", message: "", action: () => {} }
+
+  const showSuccess = (message, title = "Berhasil") => {
+    setNotification({ type: "success", title, message });
+  };
+
+  const showError = (message, title = "Gagal") => {
+    setNotification({ type: "error", title, message });
+  };
+
+  const showConfirm = (message, action, title = "Konfirmasi") => {
+    setNotification({ type: "confirm", title, message, action });
+  };
 
   // ── Mode input (manual | excel) ──────────────────────────────────
   const [inputMode, setInputMode] = useState("manual"); // "manual" | "excel"
@@ -110,31 +127,40 @@ export default function AdminPage() {
         body: JSON.stringify(payload),
       });
       if (response.ok) {
-        alert(isEditing ? "User diperbarui!" : `User ditambahkan! Password bawaan: ${formData.nrp}@dti`);
+        showSuccess(isEditing ? "Data user berhasil diperbarui!" : `User baru berhasil ditambahkan! Password bawaan: ${formData.nrp.trim()}@dti`);
         setFormData({ nrp: "", nama: "", role: "mahasiswa" });
         setIsEditing(false);
         fetchUsers();
       } else {
         const errorResult = await response.json();
-        alert(`Gagal: ${errorResult.message || "Terjadi kesalahan"}`);
+        showError(errorResult.message || "Terjadi kesalahan saat menyimpan data.");
       }
     } catch (error) {
       console.error(error);
+      showError("Koneksi internet terputus atau server tidak merespons.");
     }
   };
 
   // ── Hapus user ────────────────────────────────────────────────────
-  const handleDelete = async (nrp) => {
-    if (!confirm(`Hapus user dengan NRP ${nrp}?`)) return;
-    try {
-      const response = await fetch(`${API_URL}/admin/users/${nrp}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (response.ok) fetchUsers();
-    } catch (error) {
-      console.error(error);
-    }
+  const handleDelete = (nrp) => {
+    showConfirm(`Apakah Anda yakin ingin menghapus user dengan NRP ${nrp}? Tindakan ini bersifat permanen.`, async () => {
+      try {
+        const response = await fetch(`${API_URL}/admin/users/${nrp}`, {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (response.ok) {
+          showSuccess(`User dengan NRP ${nrp} berhasil dihapus dari database.`);
+          fetchUsers();
+        } else {
+          const err = await response.json();
+          showError(err.message || "Gagal menghapus user dari database.");
+        }
+      } catch (error) {
+        console.error(error);
+        showError("Koneksi gagal saat menghubungi server.");
+      }
+    });
   };
 
   // ── Parsing Excel ─────────────────────────────────────────────────
@@ -169,7 +195,7 @@ export default function AdminPage() {
         setExcelRows(normalized);
         setIsPreviewOpen(true);
       } catch {
-        alert("File Excel tidak dapat dibaca. Pastikan format kolom benar (No, NRP, Nama, Status).");
+        showError("File Excel tidak dapat dibaca. Pastikan format kolom benar (No, NRP, Nama, Status).");
         setExcelRows([]);
         setExcelFileName("");
       }
@@ -653,6 +679,71 @@ export default function AdminPage() {
               </div>
             </div>
 
+          </div>
+        </div>
+      )}
+
+      {/* ── CUSTOM NOTIFICATION MODAL (SUCCESS / ERROR / CONFIRM) ── */}
+      {notification && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white dark:bg-slate-900 border border-spark-border rounded-3xl p-6 max-w-sm w-full shadow-2xl relative overflow-hidden animate-scale-in text-center">
+            {/* Background decoration glow */}
+            <div className="absolute -top-12 -right-12 w-32 h-32 bg-blue-500/5 rounded-full blur-2xl pointer-events-none" />
+            
+            {/* Icon Header */}
+            <div className="flex justify-center mb-5">
+              {notification.type === "success" && (
+                <div className="w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600 shadow-md">
+                  <CheckCircle2 className="w-7 h-7" />
+                </div>
+              )}
+              {notification.type === "error" && (
+                <div className="w-14 h-14 rounded-full bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-600 shadow-md">
+                  <AlertCircle className="w-7 h-7" />
+                </div>
+              )}
+              {notification.type === "confirm" && (
+                <div className="w-14 h-14 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500 shadow-md animate-bounce">
+                  <HelpCircle className="w-7 h-7" />
+                </div>
+              )}
+            </div>
+
+            {/* Title & Description */}
+            <h3 className="text-base font-extrabold text-spark-primary mb-2">
+              {notification.title}
+            </h3>
+            <p className="text-xs text-spark-secondary font-medium leading-relaxed mb-6">
+              {notification.message}
+            </p>
+
+            {/* Actions Buttons */}
+            {notification.type === "confirm" ? (
+              <div className="flex gap-3 w-full">
+                <button
+                  onClick={() => setNotification(null)}
+                  className="flex-1 py-3 rounded-xl border border-spark-border hover:bg-slate-50 dark:hover:bg-slate-800 text-spark-secondary text-xs font-bold transition-all active:scale-95"
+                >
+                  Batal
+                </button>
+                <button
+                  onClick={() => {
+                    notification.action();
+                    setNotification(null);
+                  }}
+                  className="flex-1 py-3 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-lg shadow-rose-500/10 transition-all active:scale-95"
+                >
+                  Ya, Hapus
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setNotification(null)}
+                className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-lg shadow-blue-500/10 transition-all active:scale-95"
+              >
+                Mengerti
+              </button>
+            )}
           </div>
         </div>
       )}
