@@ -506,9 +506,9 @@ body {
 [data-theme="light"] .has-grid-bg {
   background-color: #ffffff !important;
   background-image: 
-    linear-gradient(to right, rgba(29, 78, 216, 0.05) 1.5px, transparent 1.5px),
-    linear-gradient(to bottom, rgba(29, 78, 216, 0.05) 1.5px, transparent 1.5px) !important;
-  background-size: 32px 32px !important;
+    linear-gradient(to right, rgba(29, 78, 216, 0.08) 2px, transparent 2px),
+    linear-gradient(to bottom, rgba(29, 78, 216, 0.08) 2px, transparent 2px) !important;
+  background-size: 48px 48px !important;
 }
 
 /* Light blue outer sheet holding features card content */
