@@ -117,11 +117,11 @@ function FormatMessageText({ text, isUser }) {
       {blocks.map((block, i) => {
         if (block.type === "list-item") {
           return (
-            <div key={i} className="flex gap-2.5 pl-1 py-0.5 items-start leading-relaxed">
-              <span className={`font-extrabold flex-shrink-0 min-w-[1.25rem] ${isUser ? "text-blue-100" : "text-blue-600 dark:text-blue-400"}`}>
+            <div key={i} className="pl-5 relative py-0.5 leading-relaxed">
+              <span className={`absolute left-0 font-extrabold ${isUser ? "text-blue-100" : "text-blue-600 dark:text-blue-400"}`}>
                 {block.number}.
               </span>
-              <span className="flex-1">
+              <span className="block break-words">
                 {parseMarkdown(block.content)}
               </span>
             </div>
@@ -473,7 +473,7 @@ export default function SksChatbotPage() {
                       </div>
                     )}
                     <div
-                      className={`max-w-[75%] px-4 py-3 rounded-2xl text-xs leading-relaxed font-semibold break-words ${msg.role === "user"
+                      className={`w-full max-w-[85%] md:max-w-[75%] px-4 py-3 rounded-2xl text-xs leading-relaxed font-semibold break-words ${msg.role === "user"
                         ? "bg-gradient-to-br from-blue-600 to-blue-700 !text-white rounded-br-sm shadow-md"
                         : "bg-blue-50/50 text-blue-950 rounded-bl-sm border border-blue-100/70"
                         }`}
