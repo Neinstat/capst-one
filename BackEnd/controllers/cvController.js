@@ -32,9 +32,9 @@ exports.reviewCV = async (req, res) => {
     form.append("company", company || "");
 
     // 2. Tembak endpoint internal AI Python menggunakan DNS Docker 'ai-service'
-    // Jalur endpoint disesuaikan dengan kurikulum AI Agent timmu (misal: /api/cv/review)
+    const aiServiceUrl = process.env.AI_SERVICE_URL || "http://ai-service:8000";
     const aiResponse = await axios.post(
-      "http://ai-service:8000/api/cv/review",
+      `${aiServiceUrl}/api/cv/review`,
       form,
       {
         headers: { ...form.getHeaders() },

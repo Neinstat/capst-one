@@ -21,9 +21,9 @@ exports.analyzeTranscript = async (req, res) => {
     });
 
     // 2. Tembak endpoint internal AI Python (ai-service port 8000)
-    // Jalur endpoint disesuaikan dengan milik tim AI kamu: /api/academic/upload-transcript
+    const aiServiceUrl = process.env.AI_SERVICE_URL || "http://ai-service:8000";
     const aiResponse = await axios.post(
-      "http://ai-service:8000/api/academic/upload-transcript",
+      `${aiServiceUrl}/api/academic/upload-transcript`,
       form,
       {
         headers: { ...form.getHeaders() },

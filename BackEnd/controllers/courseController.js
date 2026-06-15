@@ -36,8 +36,9 @@ exports.analyzeTranscript = async (req, res) => {
       contentType: "application/pdf",
     });
 
+    const aiServiceUrl = process.env.AI_SERVICE_URL || "http://ai-service:8000";
     const aiResponse = await axios.post(
-      "http://ai-service:8000/api/academic/upload-transcript",
+      `${aiServiceUrl}/api/academic/upload-transcript`,
       form,
       {
         headers: {
