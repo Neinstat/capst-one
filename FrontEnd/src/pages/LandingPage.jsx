@@ -343,7 +343,7 @@ export default function LandingPage() {
 
               <div className="space-y-6">
                 <p className="text-slate-800 text-base md:text-lg font-semibold leading-relaxed relative z-10">
-                  "SPARK DTI sangat memudahkan saya dalam memetakan kurikulum kelulusan dan memetakan konversi SKS MSIB. Ditambah lagi, AI CV Reviewer-nya sangat akurat dalam memberikan rekomendasi kata kunci industri sehingga saya berhasil lolos sebagai Software Engineer Intern."
+                  "Web sangat membantu dan informatif, apalagi masi banyak yg bingung terkait pemetaan kurikulum dan terkait konversi SKS. Dokumen-dokumen terkait bisa diakses langsung di platform nya juga. fitur ai cv reviewer nya juga helpful, menambah insight mengenai cv serta posisi yg dilamar."
                 </p>
 
                 <div className="flex items-center gap-3">
