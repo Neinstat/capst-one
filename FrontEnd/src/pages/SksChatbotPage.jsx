@@ -59,11 +59,10 @@ function FormatMessageText({ text, isUser }) {
     }
   });
 
-  // Helper to parse bold (**word**) and italic (*word*) into JSX elements.
+  // Helper to parse bold (**word**), italic (*word*) and links ([text](url)) into JSX elements.
   const parseMarkdown = (str) => {
-    // Split by ** or * markers.
-    // Regex matches either **bold** or *italic*
-    const parts = str.split(/(\*\*.*?\*\*|\*.*?\*)/g);
+    // Split by markdown elements: **bold**, *italic*, and [link text](url)
+    const parts = str.split(/(\*\*.*?\*\*|\*.*?\*|\[.*?\]\(.*?\))/g);
     return parts.map((part, index) => {
       if (part.startsWith("**") && part.endsWith("**")) {
         const content = part.slice(2, -2);
@@ -87,6 +86,27 @@ function FormatMessageText({ text, isUser }) {
             {content}
           </em>
         );
+      } else if (part.startsWith("[") && part.includes("](")) {
+        const match = part.match(/\[(.*?)\]\((.*?)\)/);
+        if (match) {
+          const label = match[1];
+          const url = match[2];
+          return (
+            <a
+              key={index}
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`underline font-bold transition-all ${
+                isUser 
+                  ? "text-white hover:text-blue-100" 
+                  : "text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+              }`}
+            >
+              {label}
+            </a>
+          );
+        }
       }
       return part;
     });
@@ -453,7 +473,7 @@ export default function SksChatbotPage() {
                       </div>
                     )}
                     <div
-                      className={`max-w-[75%] px-4 py-3 rounded-2xl text-xs leading-relaxed font-semibold ${msg.role === "user"
+                      className={`max-w-[75%] px-4 py-3 rounded-2xl text-xs leading-relaxed font-semibold break-words ${msg.role === "user"
                         ? "bg-gradient-to-br from-blue-600 to-blue-700 !text-white rounded-br-sm shadow-md"
                         : "bg-blue-50/50 text-blue-950 rounded-bl-sm border border-blue-100/70"
                         }`}

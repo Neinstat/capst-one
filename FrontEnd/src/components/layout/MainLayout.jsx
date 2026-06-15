@@ -61,6 +61,12 @@ export default function MainLayout() {
     }
   }, [location.pathname]);
 
+  useEffect(() => {
+    if (window.innerWidth < 768) {
+      useUIStore.setState({ sidebarOpen: false });
+    }
+  }, []);
+
   // State untuk Dropdown Profile di Header
   const [profileOpen, setProfileOpen] = useState(false);
   // State untuk Modal Konfirmasi Tentang DTI
@@ -316,6 +322,49 @@ export default function MainLayout() {
                   );
                 })}
               </nav>
+
+              {/* Seksi Tambahan untuk Mobile (Our Team & Tentang DTI) */}
+              {sidebarOpen && (
+                <div className="md:hidden mt-6 pt-6 border-t border-white/5 space-y-1">
+                  <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-3 px-2">
+                    Informasi DTI
+                  </p>
+                  <NavLink
+                    to="/our-team"
+                    onClick={() => {
+                      if (window.innerWidth < 768) toggleSidebar();
+                    }}
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 rounded-xl px-2 py-2 transition-all duration-300 ${isActive
+                        ? "bg-white/10 text-white"
+                        : "hover:bg-white/5 text-slate-400 hover:text-slate-200"
+                      }`
+                    }
+                  >
+                    <span className="w-9 h-9 rounded-xl flex items-center justify-center bg-slate-500/10 text-slate-400">
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                      </svg>
+                    </span>
+                    <span className="text-xs font-semibold">Our Team</span>
+                  </NavLink>
+
+                  <button
+                    onClick={() => {
+                      if (window.innerWidth < 768) toggleSidebar();
+                      setTentangDTIOpen(true);
+                    }}
+                    className="w-full flex items-center gap-3 rounded-xl px-2 py-2 hover:bg-white/5 text-slate-400 hover:text-slate-200 transition-all duration-300"
+                  >
+                    <span className="w-9 h-9 rounded-xl flex items-center justify-center bg-slate-500/10 text-slate-400">
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </span>
+                    <span className="text-xs font-semibold text-left">Tentang DTI</span>
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
