@@ -115,7 +115,7 @@ export default function LandingPage() {
   }
 
   return (
-    <div className="w-full h-screen overflow-y-auto overflow-x-hidden bg-gradient-to-r from-[rgb(209,231,254)] to-[rgb(251,252,255)] text-[#0f172a] font-sans scroll-smooth relative selection:bg-blue-600/10 selection:text-blue-600">
+    <div className="w-full h-[100dvh] overflow-y-auto overflow-x-hidden bg-gradient-to-r from-[rgb(209,231,254)] to-[rgb(251,252,255)] text-[#0f172a] font-sans scroll-smooth relative selection:bg-blue-600/10 selection:text-blue-600">
 
       {/* Decorative Blur Background Gradients */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[600px] bg-gradient-to-b from-blue-50/70 via-sky-50/30 to-transparent pointer-events-none -z-10" />

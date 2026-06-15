@@ -271,7 +271,7 @@ export default function OpportunityBoardPage() {
   };
 
   return (
-    <div className="p-4 md:p-6 max-w-5xl mx-auto space-y-6 md:space-y-8 animate-scale-in text-spark-primary">
+    <div className="p-4 md:p-6 max-w-5xl mx-auto space-y-6 md:space-y-8 pb-10 md:pb-6 animate-scale-in text-spark-primary">
       {/* Premium Hero Banner */}
       <div className="relative overflow-hidden rounded-3xl spark-banner p-6 md:p-10 shadow-xl border">
         <div className="absolute -top-24 -right-24 w-72 h-72 bg-amber-500/20 rounded-full blur-[80px] pointer-events-none animate-pulse duration-[8000ms]" />

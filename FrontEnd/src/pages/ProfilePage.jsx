@@ -80,7 +80,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="p-4 md:p-6 max-w-4xl mx-auto space-y-6 animate-scale-in text-spark-primary">
+    <div className="p-4 md:p-6 max-w-4xl mx-auto space-y-6 pb-10 md:pb-6 animate-scale-in text-spark-primary">
       {/* Hero Banner */}
       <div className="relative overflow-hidden rounded-3xl spark-banner p-5 md:p-8 shadow-xl border flex-shrink-0">
         <div className="absolute -top-24 -right-24 w-72 h-72 bg-amber-500/20 rounded-full blur-[80px] pointer-events-none animate-pulse" />

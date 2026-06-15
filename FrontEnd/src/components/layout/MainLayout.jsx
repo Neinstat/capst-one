@@ -88,7 +88,7 @@ export default function MainLayout() {
   return (
     // Mengunci container paling luar agar tidak memicu scrollbar browser utama
     <div
-      className="w-screen h-screen flex flex-col relative overflow-hidden dashboard-theme text-slate-100 font-sans"
+      className="w-screen h-[100dvh] flex flex-col relative overflow-hidden dashboard-theme text-slate-100 font-sans"
       style={{
         backgroundImage: "url('/tower-2.jpg')",
         backgroundSize: "cover",
@@ -226,7 +226,7 @@ export default function MainLayout() {
               transition-all duration-300 ease-in-out select-none
               mt-0 md:mt-6 mb-0 md:mb-3 ml-0 md:ml-6 mr-0 md:mr-2
               rounded-none md:rounded-[24px] border-r md:border border-white/10 shadow-lg
-              h-[calc(100vh-73px)] md:h-fit md:max-h-[calc(100%-2.25rem)]
+              h-[calc(100dvh-73px)] md:h-fit md:max-h-[calc(100%-2.25rem)]
               overflow-hidden md:overflow-visible
               ${sidebarOpen 
                 ? "w-60 p-4 translate-x-0" 
