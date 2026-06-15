@@ -343,7 +343,7 @@ export default function LandingPage() {
 
               <div className="space-y-6">
                 <p className="text-slate-800 text-base md:text-lg font-semibold leading-relaxed relative z-10">
-                  "Web sangat membantu dan informatif, apalagi masi banyak yg bingung terkait pemetaan kurikulum dan terkait konversi SKS. Dokumen-dokumen terkait bisa diakses langsung di platform nya juga. fitur ai cv reviewer nya juga helpful, menambah insight mengenai cv serta posisi yg dilamar."
+                  "Web sangat membantu dan informatif, apalagi masi banyak yg bingung terkait pemetaan kurikulum dan terkait konversi SKS. Dokumen-dokumen terkait bisa diakses langsung di platform nya juga. fitur AI CV Reviewer nya juga helpful, menambah insight mengenai CV serta posisi yg dilamar."
                 </p>
 
                 <div className="flex items-center gap-3">
