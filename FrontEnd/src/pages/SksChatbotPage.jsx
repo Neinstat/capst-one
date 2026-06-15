@@ -1,7 +1,121 @@
 import { useState, useRef, useEffect } from "react";
-import { Send, ArrowLeft, Bot, User } from "lucide-react";
+import { Send, ArrowLeft, Bot, User, FileText, ExternalLink } from "lucide-react";
 import { SKS_JALUR } from "../lib/utils";
 import { useAuthStore } from "../store/authStore";
+
+function FormatMessageText({ text, isUser }) {
+  if (!text) return null;
+
+  // 1. Preprocess the text to separate inline numbered lists (e.g. " 1. **" or " 1. ") onto newlines.
+  // We'll replace spaces before numbers like " 1. **" or " 2. " with a newline.
+  let processedText = text;
+
+  // Replace space before list item number with newline.
+  // We match a space followed by a digit and a dot, then a space or bold tag.
+  processedText = processedText.replace(/\s+(\d+\.)\s+(?=\*\*|[A-Z])/g, '\n$1 ');
+
+  // 2. Split text by newlines.
+  const rawBlocks = processedText.split(/\n+/);
+  const blocks = [];
+
+  // 3. For each block, if it's not a list item, check its sentence count.
+  // If a block has more than 3 sentences, we split it into smaller paragraph blocks of 3 sentences each.
+  rawBlocks.forEach((block) => {
+    const trimmed = block.trim();
+    if (!trimmed) return;
+
+    // Check if it is a list item (starts with e.g. "1. ")
+    const listMatch = trimmed.match(/^(\d+)\.\s*(.*)/);
+    if (listMatch) {
+      blocks.push({
+        type: "list-item",
+        number: listMatch[1],
+        content: listMatch[2],
+      });
+      return;
+    }
+
+    // It is a normal text paragraph. Split into sentences.
+    // We split by standard sentence endings: period, question mark, exclamation mark followed by space or end of string.
+    const sentences = trimmed.match(/[^.!?]+[.!?]+(\s+|$)/g) || [trimmed];
+
+    if (sentences.length <= 4) {
+      blocks.push({
+        type: "paragraph",
+        content: trimmed,
+      });
+    } else {
+      let currentGroup = [];
+      sentences.forEach((sentence, idx) => {
+        currentGroup.push(sentence);
+        if (currentGroup.length === 3 || idx === sentences.length - 1) {
+          blocks.push({
+            type: "paragraph",
+            content: currentGroup.join("").trim(),
+          });
+          currentGroup = [];
+        }
+      });
+    }
+  });
+
+  // Helper to parse bold (**word**) and italic (*word*) into JSX elements.
+  const parseMarkdown = (str) => {
+    // Split by ** or * markers.
+    // Regex matches either **bold** or *italic*
+    const parts = str.split(/(\*\*.*?\*\*|\*.*?\*)/g);
+    return parts.map((part, index) => {
+      if (part.startsWith("**") && part.endsWith("**")) {
+        const content = part.slice(2, -2);
+        return (
+          <strong
+            key={index}
+            className={`font-extrabold ${isUser ? "text-white" : "text-blue-900"
+              }`}
+          >
+            {content}
+          </strong>
+        );
+      } else if (part.startsWith("*") && part.endsWith("*")) {
+        const content = part.slice(1, -1);
+        return (
+          <em
+            key={index}
+            className={`italic ${isUser ? "text-blue-100" : "text-blue-800"
+              }`}
+          >
+            {content}
+          </em>
+        );
+      }
+      return part;
+    });
+  };
+
+  return (
+    <div className="space-y-3">
+      {blocks.map((block, i) => {
+        if (block.type === "list-item") {
+          return (
+            <div key={i} className="flex gap-2.5 pl-1 py-0.5 items-start leading-relaxed">
+              <span className={`font-extrabold flex-shrink-0 min-w-[1.25rem] ${isUser ? "text-blue-100" : "text-blue-600 dark:text-blue-400"}`}>
+                {block.number}.
+              </span>
+              <span className="flex-1">
+                {parseMarkdown(block.content)}
+              </span>
+            </div>
+          );
+        }
+        return (
+          <p key={i} className="leading-relaxed">
+            {parseMarkdown(block.content)}
+          </p>
+        );
+      })}
+    </div>
+  );
+}
 
 export default function SksChatbotPage() {
   const { token } = useAuthStore();
@@ -145,16 +259,14 @@ export default function SksChatbotPage() {
                           setJalur(j);
                           setSubJalur(null);
                         }}
-                        className={`w-full flex items-start gap-3 p-4 rounded-2xl border-2 text-left transition-all duration-200 ${
-                          isSelected
-                            ? "border-blue-500 bg-blue-500/5 shadow-md"
-                            : "border-spark-border bg-slate-50 dark:bg-slate-950/40 hover:bg-slate-100 dark:hover:bg-slate-900/40"
-                        }`}
+                        className={`w-full flex items-start gap-3 p-4 rounded-2xl border-2 text-left transition-all duration-200 ${isSelected
+                          ? "border-blue-500 bg-blue-500/5 shadow-md"
+                          : "border-spark-border bg-slate-50 dark:bg-slate-950/40 hover:bg-slate-100 dark:hover:bg-slate-900/40"
+                          }`}
                       >
                         <div
-                          className={`w-2.5 h-2.5 rounded-full mt-1.5 flex-shrink-0 transition-colors ${
-                            isSelected ? "bg-blue-600" : "bg-slate-400 dark:bg-slate-700"
-                          }`}
+                          className={`w-2.5 h-2.5 rounded-full mt-1.5 flex-shrink-0 transition-colors ${isSelected ? "bg-blue-600" : "bg-slate-400 dark:bg-slate-700"
+                            }`}
                         />
                         <div className="flex-1">
                           <p className="text-sm font-extrabold text-spark-primary">{j.label}</p>
@@ -171,11 +283,10 @@ export default function SksChatbotPage() {
                                     e.stopPropagation();
                                     setSubJalur(s);
                                   }}
-                                  className={`text-[11px] px-3 py-1.5 rounded-xl border font-bold transition-all ${
-                                    subJalur === s
-                                      ? "bg-blue-600 border-blue-600 text-white shadow-md"
-                                      : "border-spark-border text-spark-secondary bg-spark-card hover:border-blue-500/40 hover:text-blue-600"
-                                  }`}
+                                  className={`text-[11px] px-3 py-1.5 rounded-xl border font-bold transition-all ${subJalur === s
+                                    ? "bg-blue-600 border-blue-600 text-white shadow-md"
+                                    : "border-spark-border text-spark-secondary bg-spark-card hover:border-blue-500/40 hover:text-blue-600"
+                                    }`}
                                 >
                                   {s}
                                 </button>
@@ -231,7 +342,16 @@ export default function SksChatbotPage() {
                   ))}
                 </div>
               </div>
-              <div className="mt-6 pt-4 border-t border-spark-border">
+              <div className="mt-6 pt-4 border-t border-spark-border space-y-3">
+                <a
+                  href="https://drive.google.com/file/d/1WhfgZpQPsTE_pRsW8mSZc0OoW53CZszJ/view?usp=sharing"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/60 dark:hover:bg-slate-900 border border-spark-border rounded-xl text-xs font-bold text-blue-600 dark:text-blue-400 hover:scale-[1.01] active:scale-95 transition-all"
+                >
+                  <FileText className="w-3.5 h-3.5" />
+                  PPT Panduan Resmi (PDF)
+                </a>
                 <p className="text-[10px] font-bold text-spark-muted leading-relaxed">
                   * Estimasi AI bersifat indikatif. Keputusan final ada di tangan koordinator MBKM DTI.
                 </p>
@@ -245,7 +365,7 @@ export default function SksChatbotPage() {
           <div className="flex flex-col md:flex-row gap-6 animate-scale-in" style={{ height: "520px" }}>
             {/* Tabel Referensi */}
             <div className="w-full md:w-[280px] flex-shrink-0 overflow-y-auto clean-scrollbar">
-              <div className="bg-spark-card rounded-3xl border p-6 shadow-lg h-full">
+              <div className="bg-spark-card rounded-3xl border p-6 shadow-lg min-h-full">
                 <h3 className="text-[10px] font-extrabold text-spark-muted uppercase tracking-widest mb-4">
                   Tabel Konversi Resmi DTI
                 </h3>
@@ -253,17 +373,17 @@ export default function SksChatbotPage() {
                   {CONVERSION_TABLE.map(({ type, sks }) => (
                     <div
                       key={type}
-                      className="flex items-start justify-between py-3 border-b border-spark-border last:border-0 gap-3"
+                      className="flex items-start justify-between py-2 border-b border-spark-border last:border-0 gap-3"
                     >
                       <p className="text-xs text-spark-secondary font-semibold leading-snug">{type}</p>
-                      <span className="text-[11px] font-extrabold text-blue-600 dark:text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded-lg border border-blue-500/20 flex-shrink-0">
+                      <span className="text-[11px] font-extrabold text-blue-600 dark:text-blue-400 bg-blue-50/50 px-2 py-0.5 rounded-lg border border-blue-500/20 flex-shrink-0">
                         {sks}
                       </span>
                     </div>
                   ))}
                 </div>
 
-                <div className="mt-4 pt-4 border-t border-spark-border">
+                <div className="mt-3.5 pt-3.5 border-t border-spark-border">
                   <p className="text-[10px] font-bold text-spark-muted uppercase tracking-widest mb-2">
                     Konteks Aktif
                   </p>
@@ -275,6 +395,25 @@ export default function SksChatbotPage() {
                       {subJalur}
                     </span>
                   </div>
+                </div>
+
+                <div className="mt-3.5 pt-3.5 border-t border-spark-border">
+                  <p className="text-[10px] font-extrabold text-spark-muted uppercase tracking-widest mb-1.5">
+                    Butuh Panduan Detail?
+                  </p>
+                  <p className="text-[11px] font-semibold text-spark-secondary mb-3 leading-relaxed">
+                    Baca panduan resmi alur konversi dan berkas syarat (LoA, PKS, dll).
+                  </p>
+                  <a
+                    href="https://drive.google.com/file/d/1WhfgZpQPsTE_pRsW8mSZc0OoW53CZszJ/view?usp=sharing"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full flex items-center justify-center gap-2 py-2 px-3 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 rounded-xl text-xs font-bold text-blue-600 dark:text-blue-400 transition-all hover:scale-[1.01] active:scale-95"
+                  >
+                    <FileText className="w-3.5 h-3.5" />
+                    Buka Panduan Resmi
+                    <ExternalLink className="w-3 h-3 ml-auto opacity-60" />
+                  </a>
                 </div>
               </div>
             </div>
@@ -314,13 +453,27 @@ export default function SksChatbotPage() {
                       </div>
                     )}
                     <div
-                      className={`max-w-[75%] px-4 py-3 rounded-2xl text-xs leading-relaxed font-semibold ${
-                        msg.role === "user"
-                          ? "bg-gradient-to-br from-blue-600 to-blue-700 !text-white rounded-br-sm shadow-md"
-                          : "bg-blue-50/50 text-blue-950 rounded-bl-sm border border-blue-100/70"
-                      }`}
+                      className={`max-w-[75%] px-4 py-3 rounded-2xl text-xs leading-relaxed font-semibold ${msg.role === "user"
+                        ? "bg-gradient-to-br from-blue-600 to-blue-700 !text-white rounded-br-sm shadow-md"
+                        : "bg-blue-50/50 text-blue-950 rounded-bl-sm border border-blue-100/70"
+                        }`}
                     >
-                      {msg.text}
+                      <FormatMessageText text={msg.text} isUser={msg.role === "user"} />
+
+                      {msg.role === "bot" && /(loa|pks|dokumen|berkas|syarat|form)/i.test(msg.text) && (
+                        <div className="mt-3 pt-3 border-t border-blue-100/60 dark:border-blue-900/20">
+                          <a
+                            href="https://drive.google.com/file/d/1WhfgZpQPsTE_pRsW8mSZc0OoW53CZszJ/view?usp=sharing"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-[10px] font-bold shadow-md hover:scale-[1.02] active:scale-95 transition-all"
+                          >
+                            <FileText className="w-3 h-3" />
+                            Pelajari Syarat & Panduan Resmi
+                            <ExternalLink className="w-2.5 h-2.5" />
+                          </a>
+                        </div>
+                      )}
                     </div>
                     {msg.role === "user" && (
                       <div className="w-7 h-7 rounded-xl bg-blue-50 border border-blue-100/60 flex items-center justify-center flex-shrink-0 mb-0.5">

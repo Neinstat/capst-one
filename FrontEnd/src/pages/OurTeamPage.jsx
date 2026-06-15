@@ -11,7 +11,7 @@ export default function OurTeamPage() {
       gradient: "from-blue-600 to-indigo-600",
       glow: "rgba(99,102,241,0.35)",
       image: "/team/fikri.jpeg",
-      quote: "Membangun fondasi backend yang kokoh dan API yang efisien adalah kunci untuk menghadirkan pengalaman pengguna yang andal dan responsif.",
+      quote: "Ngebangun arsitektur sistem dan backend yang kokoh itu seru banget. Bagi saya, API yang efisien adalah kunci utama biar user bisa dapet pengalaman yang lancar dan tanpa hambatan.",
       linkedin: "https://www.linkedin.com/in/fikri-aulia-as-saadi/",
       github: "https://github.com/FikriAuliaa"
     },
@@ -36,8 +36,8 @@ export default function OurTeamPage() {
       avatar: "AI",
       gradient: "from-blue-500 to-cyan-600",
       glow: "rgba(6,182,212,0.30)",
-      image: "/team/randist.jpg",
-      quote: "Mengintegrasikan kecerdasan buatan ke dalam sistem akademik membantu memberikan solusi yang lebih personal dan cerdas bagi mahasiswa.",
+      image: "/team/randist.jpeg",
+      quote: "Ngembangin pipeline AI buat Chatbot SKS ini menantang sekaligus asyik. Fokus saya adalah gimana cara teknologi pintar ini bisa beneran ngasih solusi personal buat kebutuhan mahasiswa.",
       linkedin: "https://www.linkedin.com/in/randistpputera/",
       github: "https://github.com/U5ESLESS"
     },
@@ -50,7 +50,7 @@ export default function OurTeamPage() {
       gradient: "from-indigo-500 to-purple-600",
       glow: "rgba(139,92,246,0.30)",
       image: "/team/hasan.png",
-      quote: "Kolaborasi yang sinergis dan manajemen waktu yang tepat adalah kunci utama dalam mengubah ide visioner menjadi produk nyata yang bermanfaat.",
+      quote: "Jadi PM di tim ini tuh tentang menyatukan banyak kepala. Kolaborasi yang asyik dan manajemen waktu yang pas adalah kunci kita buat nyulap ide-ide keren jadi produk nyata.",
       linkedin: "https://www.linkedin.com/in/hasanzs375/",
       github: "https://github.com/Hasanzs"
     },
@@ -62,8 +62,8 @@ export default function OurTeamPage() {
       avatar: "AI",
       gradient: "from-blue-600 to-blue-800",
       glow: "rgba(37,99,235,0.30)",
-      image: "/team/nabiel.jpg",
-      quote: "Menyederhanakan data akademik yang kompleks melalui pemrosesan bahasa alami (NLP) untuk membantu keputusan studi mahasiswa.",
+      image: "/team/nabiel.jpeg",
+      quote: "Data akademik itu aslinya rumit banget. Lewat pemrosesan bahasa alami (NLP) yang saya bangun, saya pengen bikin semua data kompleks itu jadi simpel dan gampang dipahami mahasiswa.",
       linkedin: "https://www.linkedin.com/in/nabiel-nizar-anwari/",
       github: "https://github.com/bielnzar"
     },
