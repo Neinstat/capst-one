@@ -71,7 +71,7 @@ export default function OurTeamPage() {
 
   return (
     <div className="h-full overflow-y-auto clean-scrollbar">
-      <div className="p-8 max-w-6xl mx-auto animate-scale-in">
+      <div className="p-4 md:p-8 max-w-6xl mx-auto animate-scale-in">
 
         {/* Page Header */}
         <div className="text-center mb-12">

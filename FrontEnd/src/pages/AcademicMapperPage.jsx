@@ -82,9 +82,9 @@ export default function AcademicMapperPage() {
   }
 
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-8 animate-scale-in text-spark-primary">
+    <div className="p-4 md:p-6 max-w-6xl mx-auto space-y-6 md:space-y-8 animate-scale-in text-spark-primary">
       {/* Premium Hero Banner */}
-      <div className="relative overflow-hidden rounded-3xl spark-banner p-8 md:p-10 shadow-xl border">
+      <div className="relative overflow-hidden rounded-3xl spark-banner p-6 md:p-10 shadow-xl border">
         {/* Glow Spheres */}
         <div className="absolute -top-24 -right-24 w-72 h-72 bg-blue-500/10 rounded-full blur-[80px] pointer-events-none animate-pulse" />
         <div className="absolute -bottom-24 -left-12 w-96 h-96 bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none animate-pulse" />
@@ -208,16 +208,18 @@ export default function AcademicMapperPage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Radar Chart */}
-              <div className="bg-spark-card rounded-3xl border p-7 shadow-lg">
+              <div className="bg-spark-card rounded-3xl border p-5 md:p-7 shadow-lg">
                 <h2 className="text-xs font-extrabold text-spark-muted uppercase tracking-widest mb-6">Skills Assessment</h2>
-                <ResponsiveContainer width="100%" height={280}>
-                  <RadarChart data={resultData.skillData}>
-                    <PolarGrid stroke="var(--color-border)" />
-                    <PolarAngleAxis dataKey="subject" tick={{ fontSize: 11, fill: 'var(--color-text-secondary)', fontWeight: 600 }} />
-                    <Tooltip contentStyle={{ backgroundColor: 'var(--color-bg-card)', borderRadius: 12, border: '1px solid var(--color-border)', fontSize: 12, color: 'var(--color-text-primary)' }} />
-                    <Radar name="Skor" dataKey="score" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.15} strokeWidth={2} />
-                  </RadarChart>
-                </ResponsiveContainer>
+                <div className="relative w-full overflow-hidden">
+                  <ResponsiveContainer width="100%" height={280}>
+                    <RadarChart data={resultData.skillData}>
+                      <PolarGrid stroke="var(--color-border)" />
+                      <PolarAngleAxis dataKey="subject" tick={{ fontSize: 9, fill: 'var(--color-text-secondary)', fontWeight: 600 }} />
+                      <Tooltip contentStyle={{ backgroundColor: 'var(--color-bg-card)', borderRadius: 12, border: '1px solid var(--color-border)', fontSize: 12, color: 'var(--color-text-primary)' }} />
+                      <Radar name="Skor" dataKey="score" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.15} strokeWidth={2} />
+                    </RadarChart>
+                  </ResponsiveContainer>
+                </div>
               </div>
 
               {/* Career Matches */}

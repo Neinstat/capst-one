@@ -103,13 +103,20 @@ export default function MainLayout() {
       <div className="absolute -bottom-32 -left-32 w-[450px] h-[450px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none z-0" />
 
       {/* Header Top Bar - spans full width at the very top */}
-      <header className="border-b border-white/5 px-6 py-4 flex items-center justify-between bg-slate-950/20 backdrop-blur-md relative z-30 flex-shrink-0 select-none">
-        <div className="flex items-center gap-3">
+      <header className="border-b border-white/5 px-4 md:px-6 py-4 flex items-center justify-between bg-slate-950/20 backdrop-blur-md relative z-30 flex-shrink-0 select-none">
+        <div className="flex items-center gap-2 md:gap-3">
+          <button
+            onClick={toggleSidebar}
+            className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all md:hidden"
+            title={sidebarOpen ? "Tutup Sidebar" : "Buka Sidebar"}
+          >
+            <MenuIcon className="w-5 h-5" />
+          </button>
           <Link to="/home" className="flex items-center gap-2 select-none hover:opacity-90 transition-opacity">
             <img
               src="/Logo Spark DTI.png"
               alt="Logo SPARK DTI"
-              className="h-10 md:h-12 w-auto object-contain drop-shadow-sm"
+              className="h-9 md:h-12 w-auto object-contain drop-shadow-sm"
             />
           </Link>
         </div>
@@ -203,14 +210,28 @@ export default function MainLayout() {
             }}
           />
         )}
+        {/* Mobile Sidebar Backdrop Overlay */}
+        {sidebarOpen && (
+          <div
+            className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-30 md:hidden"
+            onClick={toggleSidebar}
+          />
+        )}
+
         {/* Left Sidebar */}
         <aside
           className={`
-              flex flex-col bg-slate-950/45 backdrop-blur-2xl flex-shrink-0
+              fixed md:relative top-[73px] md:top-auto left-0 bottom-0 z-40 md:z-auto
+              flex flex-col bg-slate-950/95 md:bg-slate-950/45 backdrop-blur-2xl flex-shrink-0
               transition-all duration-300 ease-in-out select-none
-              mt-6 mb-3 ml-6 mr-2 rounded-[24px] border border-white/10 shadow-lg
-              h-fit max-h-[calc(100%-2.25rem)]
-              ${sidebarOpen ? "w-60 p-4" : "w-20 p-4"}
+              mt-0 md:mt-6 mb-0 md:mb-3 ml-0 md:ml-6 mr-0 md:mr-2
+              rounded-none md:rounded-[24px] border-r md:border border-white/10 shadow-lg
+              h-[calc(100vh-73px)] md:h-fit md:max-h-[calc(100%-2.25rem)]
+              overflow-hidden md:overflow-visible
+              ${sidebarOpen 
+                ? "w-60 p-4 translate-x-0" 
+                : "w-0 md:w-20 p-0 md:p-4 -translate-x-full md:translate-x-0"
+              }
             `}
         >
           {/* Toggle Sidebar Button */}
@@ -250,6 +271,11 @@ export default function MainLayout() {
                     <NavLink
                       key={path}
                       to={path}
+                      onClick={() => {
+                        if (window.innerWidth < 768) {
+                          toggleSidebar();
+                        }
+                      }}
                       className={({ isActive }) =>
                         `flex items-center rounded-xl transition-all duration-300 group ${sidebarOpen ? "gap-3 px-2 py-2" : "justify-center px-0 py-2"
                         } ${isActive

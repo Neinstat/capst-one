@@ -362,7 +362,7 @@ export default function SksChatbotPage() {
 
         {/* Chat Step */}
         {step === "chat" && (
-          <div className="flex flex-col md:flex-row gap-6 animate-scale-in" style={{ height: "520px" }}>
+          <div className="flex flex-col md:flex-row gap-6 animate-scale-in h-auto md:h-[520px]">
             {/* Tabel Referensi */}
             <div className="w-full md:w-[280px] flex-shrink-0 overflow-y-auto clean-scrollbar">
               <div className="bg-spark-card rounded-3xl border p-6 shadow-lg min-h-full">
@@ -419,7 +419,7 @@ export default function SksChatbotPage() {
             </div>
 
             {/* Chat Interface */}
-            <div className="flex-1 flex flex-col bg-spark-card rounded-3xl border shadow-lg overflow-hidden min-h-0">
+            <div className="flex-1 flex flex-col bg-spark-card rounded-3xl border shadow-lg overflow-hidden min-h-[450px] md:min-h-0">
               {/* Chat Header */}
               <div className="px-6 py-4 border-b border-spark-border flex items-center gap-3 flex-shrink-0">
                 <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center shadow-md">

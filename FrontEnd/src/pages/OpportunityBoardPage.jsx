@@ -271,9 +271,9 @@ export default function OpportunityBoardPage() {
   };
 
   return (
-    <div className="p-6 max-w-5xl mx-auto space-y-8 animate-scale-in text-spark-primary">
+    <div className="p-4 md:p-6 max-w-5xl mx-auto space-y-6 md:space-y-8 animate-scale-in text-spark-primary">
       {/* Premium Hero Banner */}
-      <div className="relative overflow-hidden rounded-3xl spark-banner p-8 md:p-10 shadow-xl border">
+      <div className="relative overflow-hidden rounded-3xl spark-banner p-6 md:p-10 shadow-xl border">
         <div className="absolute -top-24 -right-24 w-72 h-72 bg-amber-500/20 rounded-full blur-[80px] pointer-events-none animate-pulse duration-[8000ms]" />
         <div className="absolute -bottom-24 -left-12 w-96 h-96 bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none animate-pulse duration-[12000ms]" />
 
@@ -458,7 +458,7 @@ export default function OpportunityBoardPage() {
           <div className="flex min-h-full items-center justify-center p-4">
             <form
               onSubmit={handleAddJob}
-              className="relative w-full max-w-lg bg-white dark:bg-slate-900/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-slate-100 dark:border-white/10 p-8 overflow-y-auto max-h-[90vh] flex flex-col justify-between overflow-hidden text-spark-primary animate-scale-in"
+              className="relative w-full max-w-lg bg-white dark:bg-slate-900/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-slate-100 dark:border-white/10 p-5 md:p-8 overflow-y-auto max-h-[90vh] flex flex-col justify-between overflow-hidden text-spark-primary animate-scale-in"
             >
               <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-600 via-indigo-500 to-cyan-400" />
               <div className="flex items-center justify-between mb-6">
@@ -644,7 +644,7 @@ export default function OpportunityBoardPage() {
             onClick={() => setSelectedId(null)}
           />
           <div className="flex min-h-full items-end sm:items-center justify-center p-4">
-            <div className="relative w-full sm:max-w-xl bg-white dark:bg-slate-900/95 backdrop-blur-xl rounded-t-3xl sm:rounded-3xl border border-slate-100 dark:border-white/10 shadow-2xl p-8 mx-auto my-auto overflow-hidden animate-scale-in">
+            <div className="relative w-full sm:max-w-xl bg-white dark:bg-slate-900/95 backdrop-blur-xl rounded-t-3xl sm:rounded-3xl border border-slate-100 dark:border-white/10 shadow-2xl p-5 md:p-8 mx-auto my-auto overflow-hidden animate-scale-in">
               <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-600 via-indigo-500 to-cyan-400" />
               <div className="flex items-start justify-between gap-4 mb-6">
                 <div className="flex items-center gap-4">

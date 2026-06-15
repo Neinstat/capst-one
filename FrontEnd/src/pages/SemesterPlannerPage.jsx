@@ -87,9 +87,9 @@ export default function SemesterPlannerPage() {
   }
 
   return (
-    <div className="p-6 max-w-5xl mx-auto space-y-8 animate-scale-in text-spark-primary">
+    <div className="p-4 md:p-6 max-w-5xl mx-auto space-y-6 md:space-y-8 animate-scale-in text-spark-primary">
       {/* Premium Hero Banner */}
-      <div className="relative overflow-hidden rounded-3xl spark-banner p-8 md:p-10 shadow-xl border">
+      <div className="relative overflow-hidden rounded-3xl spark-banner p-6 md:p-10 shadow-xl border">
         <div className="absolute -top-24 -right-24 w-72 h-72 bg-amber-500/10 rounded-full blur-[80px] pointer-events-none animate-pulse" />
         <div className="absolute -bottom-24 -left-12 w-96 h-96 bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none animate-pulse" />
 
@@ -438,20 +438,20 @@ export default function SemesterPlannerPage() {
                         semester.courses.map((course, cIdx) => (
                           <li
                             key={cIdx}
-                            className="px-4 py-3 flex justify-between items-center hover:bg-slate-50/50 dark:hover:bg-white/5 transition-colors"
+                            className="px-4 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/50 dark:hover:bg-white/5 transition-colors"
                           >
-                            <div className="flex flex-col">
+                            <div className="flex flex-col min-w-0">
                               <span className="text-[10px] font-bold text-spark-muted mb-0.5 font-mono">
                                 {course.kode}
                               </span>
-                              <span className="text-xs font-bold text-spark-primary">
+                              <span className="text-xs font-bold text-spark-primary break-words">
                                 {course.nama}
                               </span>
                               <span className="text-[10px] font-medium text-spark-muted mt-0.5 italic">
                                 {course.kategori || "Sesuai Kurikulum"}
                               </span>
                             </div>
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-3 self-end sm:self-auto flex-shrink-0">
                               <span
                                 className={`text-[9px] font-extrabold uppercase px-2 py-0.5 rounded ${course.tipe === "Wajib"
                                   ? "bg-blue-500/10 border border-blue-500/20 text-blue-600"
