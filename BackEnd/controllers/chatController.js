@@ -9,9 +9,9 @@ exports.handleChatBot = async (req, res) => {
   }
 
   try {
-    // Tembak ke layanan AI Python menggunakan DNS internal Docker 'ai-service'
-    // Sesuaikan port dan rute internal jika tim AI kamu memiliki endpoint spesifik (misal: /api/chat atau /api/mbkm/chat)
-    const aiResponse = await axios.post("http://ai-service:8000/api/mbkm/chat", {
+    // Gunakan URL AI Service dari env, fallback ke DNS internal Docker 'ai-service'
+    const aiServiceUrl = process.env.AI_SERVICE_URL || "http://ai-service:8000";
+    const aiResponse = await axios.post(`${aiServiceUrl}/api/mbkm/chat`, {
       message: message,
       context_jalur: jalur || "Umum",
       context_sub_jalur: subJalur || "Umum",

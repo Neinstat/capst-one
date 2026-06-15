@@ -19,9 +19,10 @@ exports.generateSemesterPlan = async (req, res) => {
       contentType: "application/pdf",
     });
 
-    // 2. Tembak API Ekstraksi PDF (AI) menggunakan DNS internal Docker 'ai-service'
+    // 2. Tembak API Ekstraksi PDF (AI)
+    const aiServiceUrl = process.env.AI_SERVICE_URL || "http://ai-service:8000";
     const parseRes = await axios.post(
-      "http://ai-service:8000/api/academic/upload-transcript",
+      `${aiServiceUrl}/api/academic/upload-transcript`,
       form,
       {
         headers: { ...form.getHeaders() },
@@ -39,7 +40,7 @@ exports.generateSemesterPlan = async (req, res) => {
 
     // 3. Tembak API Semester Planner (Rule-Based) di Python membawa hasil ekstraksi
     const plannerRes = await axios.post(
-      "http://ai-service:8000/api/semester/generate",
+      `${aiServiceUrl}/api/semester/generate`,
       {
         extracted_courses: extractedCourses,
       },
