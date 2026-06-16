@@ -151,26 +151,38 @@ def generate_blueprint_plans(extracted_courses: list) -> dict:
     taken_wun_sks = 0
     taken_pilihan_sks = 0
     
+    taken_wajib = []
+    taken_wun = []
+    taken_pilihan = []
+    
     for c in extracted_courses:
         c_code = str(c.get("kode", "")).upper().strip()
         c_sks = int(c.get("sks", 0) or 0)
+        c_name = str(c.get("nama", ""))
         
         found_in_master = False
         for mk in MASTER_KURIKULUM:
             if mk["kode"].upper() == c_code:
                 found_in_master = True
+                course_info = {"kode": mk["kode"], "nama": mk["nama"], "sks": mk["sks"]}
                 if mk.get("tipe") == "Pilihan":
+                    taken_pilihan.append(course_info)
                     taken_pilihan_sks += c_sks
                 elif c_code.startswith("UG") or mk.get("tipe") == "Agama":
+                    taken_wun.append(course_info)
                     taken_wun_sks += c_sks
                 else:
+                    taken_wajib.append(course_info)
                     taken_wajib_sks += c_sks
                 break
                 
         if not found_in_master:
+            course_info = {"kode": c_code, "nama": c_name, "sks": c_sks}
             if c_code.startswith("UG"):
+                taken_wun.append(course_info)
                 taken_wun_sks += c_sks
             else:
+                taken_pilihan.append(course_info)
                 taken_pilihan_sks += c_sks
 
     remaining_wajib = []
@@ -254,17 +266,23 @@ def generate_blueprint_plans(extracted_courses: list) -> dict:
                 "wajib": {
                     "target": 103,
                     "diambil": taken_wajib_sks,
-                    "sisa": max(0, 103 - taken_wajib_sks)
+                    "sisa": max(0, 103 - taken_wajib_sks),
+                    "courses_taken": taken_wajib,
+                    "courses_remaining": remaining_wajib
                 },
                 "wun": {
                     "target": 26,
                     "diambil": taken_wun_sks,
-                    "sisa": max(0, 26 - taken_wun_sks)
+                    "sisa": max(0, 26 - taken_wun_sks),
+                    "courses_taken": taken_wun,
+                    "courses_remaining": remaining_wun
                 },
                 "pilihan": {
                     "target": 15,
                     "diambil": taken_pilihan_sks,
-                    "sisa": max(0, 15 - taken_pilihan_sks)
+                    "sisa": max(0, 15 - taken_pilihan_sks),
+                    "courses_taken": taken_pilihan,
+                    "courses_remaining": pool_pilihan
                 }
             }
         },

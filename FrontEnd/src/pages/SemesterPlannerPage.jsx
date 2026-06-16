@@ -8,6 +8,8 @@ import {
   AlertCircle,
   BarChart3,
   FileText,
+  X,
+  Info
 } from "lucide-react";
 import PdfDropzone from "../components/shared/PdfDropzone";
 import { useAuthStore } from "../store/authStore";
@@ -22,6 +24,7 @@ export default function SemesterPlannerPage() {
   const [selectedPlan, setSelectedPlan] = useState("fast");
   const [plannerData, setPlannerData] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [activeCategory, setActiveCategory] = useState(null);
 
   // Konfigurasi visual UI untuk masing-masing plan
   const planUIConfig = {
@@ -29,16 +32,37 @@ export default function SemesterPlannerPage() {
       badge: "Sprint Mode",
       badgeColor: "from-amber-500 to-orange-500",
       glowColor: "amber",
+      suitability: "Mahasiswa akademisi berorientasi studi lanjut (S2/Fast Track) atau yang ingin segera masuk ke dunia kerja secara penuh tanpa jeda magang formal.",
+      targetProfile: "Cocok untuk mahasiswa dengan motivasi belajar tinggi, siap memikul SKS padat (24 SKS) di Semester 6 & 7, dan mengincar kelulusan cepat 3.5 tahun.",
+      reasons: [
+        "Lulus cepat (3.5 tahun) menghemat biaya operasional kuliah.",
+        "Sangat tepat jika Anda tidak berencana mengambil magang MBKM luar kota yang berdurasi panjang.",
+        "Fokus menyelesaikan Tugas Akhir (TA) lebih awal di Semester 7."
+      ]
     },
     balanced: {
       badge: "Balanced",
       badgeColor: "from-blue-500 to-indigo-600",
       glowColor: "blue",
+      suitability: "Mahasiswa yang ingin menyeimbangkan performa akademik (IPK) dan persiapan karir secara bertahap.",
+      targetProfile: "Cocok untuk mahasiswa yang aktif berorganisasi, melakukan riset bersama dosen, atau mengikuti sertifikasi paralel dengan perkuliahan biasa.",
+      reasons: [
+        "Beban mata kuliah tersebar lebih merata hingga Semester 8 (tidak melelahkan).",
+        "Memberikan waktu luang ekstra untuk mempersiapkan CV, portofolio, dan lamaran kerja.",
+        "Sidang Tugas Akhir dijadwalkan di Semester 8 secara matang."
+      ]
     },
     experience: {
       badge: "Deep Dive",
       badgeColor: "from-violet-500 to-purple-600",
       glowColor: "violet",
+      suitability: "Mahasiswa yang menargetkan pengalaman industri nyata secara penuh sebelum kelulusan melalui skema konversi MBKM.",
+      targetProfile: "Cocok untuk mahasiswa yang ingin mengambil Magang Industri bersertifikat (MSIB/MBKM mandiri) skala penuh di Semester 7.",
+      reasons: [
+        "Materi kuliah teori wajib diselesaikan seluruhnya di Semester 6 agar Semester 7 bebas dari kelas teori.",
+        "Konversi penuh 20 SKS magang langsung diakui secara akademis.",
+        "Meningkatkan peluang penawaran kerja langsung (return offer) dari mitra magang setelah lulus."
+      ]
     },
   };
 
@@ -46,6 +70,33 @@ export default function SemesterPlannerPage() {
     amber: "ring-2 ring-amber-500/50 shadow-lg shadow-amber-500/5 bg-spark-card border-amber-500/30",
     blue: "ring-2 ring-blue-500/50 shadow-lg shadow-blue-500/5 bg-spark-card border-blue-500/30",
     violet: "ring-2 ring-violet-500/50 shadow-lg shadow-violet-500/5 bg-spark-card border-violet-500/30",
+  };
+
+  const categoryMeta = {
+    wajib: {
+      title: "Kelompok MK Wajib Departemen",
+      abbreviation: "MK Wajib",
+      description: "Mata Kuliah Wajib Departemen merupakan kelompok mata kuliah inti program studi Teknologi Rekayasa Instrumentasi (DTI) yang wajib diselesaikan oleh seluruh mahasiswa untuk memenuhi kompetensi dasar kelulusan teknik.",
+      colorClass: "text-blue-600 dark:text-blue-400 bg-blue-500/10 border-blue-500/20",
+      badgeColor: "bg-blue-500",
+      iconColor: "text-blue-500",
+    },
+    wun: {
+      title: "Kelompok MK Wajib Umum Nasional",
+      abbreviation: "MK WUN",
+      description: "Mata Kuliah Wajib Umum Nasional dan Universitas mencakup mata kuliah wajib nasional (Pancasila, Kewarganegaraan, Agama, Bahasa Indonesia), Bahasa Inggris, serta mata kuliah penciri institusi ITS (Aplikasi Teknologi & Transformasi Digital, Kewirausahaan berbasis Teknologi, dan KKN).",
+      colorClass: "text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
+      badgeColor: "bg-emerald-500",
+      iconColor: "text-emerald-500",
+    },
+    pilihan: {
+      title: "Kelompok MK Pilihan",
+      abbreviation: "MK Pilihan",
+      description: "Mata Kuliah Pilihan merupakan kelompok mata kuliah elektif yang disediakan oleh departemen untuk menunjang pendalaman minat keahlian mahasiswa (seperti cyber security, cloud computing, IoT, software engineering) atau konversi magang industri (MBKM). Mahasiswa wajib mengumpulkan minimal 15 SKS dari kelompok ini.",
+      colorClass: "text-purple-600 dark:text-purple-400 bg-purple-500/10 border-purple-500/20",
+      badgeColor: "bg-purple-500",
+      iconColor: "text-purple-500",
+    }
   };
 
   async function handleGeneratePlan() {
@@ -268,11 +319,19 @@ export default function SemesterPlannerPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {/* Card Wajib */}
-                  <div className="p-5 border rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100/20 dark:from-blue-950/20 dark:to-slate-900/40 border-blue-500/15 flex flex-col justify-between hover:border-blue-500/30 transition-all shadow-md">
-                    <div>
-                      <h4 className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-2">
-                        Kelompok MK Wajib
-                      </h4>
+                  <button
+                    onClick={() => setActiveCategory("wajib")}
+                    className="text-left w-full p-5 border rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100/20 dark:from-blue-950/20 dark:to-slate-900/40 border-blue-500/15 flex flex-col justify-between hover:border-blue-500/30 hover:scale-[1.02] active:scale-[0.99] transition-all shadow-md group focus:outline-none"
+                  >
+                    <div className="w-full">
+                      <div className="flex justify-between items-start">
+                        <h4 className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-2">
+                          Kelompok MK Wajib
+                        </h4>
+                        <span className="text-[10px] font-bold text-blue-500/70 opacity-0 group-hover:opacity-100 transition-opacity">
+                          Detail &rarr;
+                        </span>
+                      </div>
                       <p className="text-2xl font-black text-spark-primary">
                         103{" "}
                         <span className="text-xs font-bold text-spark-muted ml-1">
@@ -280,7 +339,7 @@ export default function SemesterPlannerPage() {
                         </span>
                       </p>
                     </div>
-                    <div className="mt-5 pt-3 border-t border-spark-border flex justify-between text-xs font-semibold">
+                    <div className="w-full mt-5 pt-3 border-t border-spark-border flex justify-between text-xs font-semibold">
                       <span className="text-spark-secondary">
                         Telah Diambil:{" "}
                         <strong className="text-blue-600 dark:text-blue-400 ml-1 font-bold">
@@ -294,14 +353,22 @@ export default function SemesterPlannerPage() {
                         </strong>
                       </span>
                     </div>
-                  </div>
+                  </button>
 
                   {/* Card WUN */}
-                  <div className="p-5 border rounded-2xl bg-gradient-to-br from-emerald-50 to-emerald-100/20 dark:from-emerald-950/20 dark:to-slate-900/40 border-emerald-500/15 flex flex-col justify-between hover:border-emerald-500/30 transition-all shadow-md">
-                    <div>
-                      <h4 className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mb-2">
-                        Kelompok MK WUN
-                      </h4>
+                  <button
+                    onClick={() => setActiveCategory("wun")}
+                    className="text-left w-full p-5 border rounded-2xl bg-gradient-to-br from-emerald-50 to-emerald-100/20 dark:from-emerald-950/20 dark:to-slate-900/40 border-emerald-500/15 flex flex-col justify-between hover:border-emerald-500/30 hover:scale-[1.02] active:scale-[0.99] transition-all shadow-md group focus:outline-none"
+                  >
+                    <div className="w-full">
+                      <div className="flex justify-between items-start">
+                        <h4 className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mb-2">
+                          Kelompok MK WUN
+                        </h4>
+                        <span className="text-[10px] font-bold text-emerald-500/70 opacity-0 group-hover:opacity-100 transition-opacity">
+                          Detail &rarr;
+                        </span>
+                      </div>
                       <p className="text-2xl font-black text-spark-primary">
                         26{" "}
                         <span className="text-xs font-bold text-spark-muted ml-1">
@@ -309,7 +376,7 @@ export default function SemesterPlannerPage() {
                         </span>
                       </p>
                     </div>
-                    <div className="mt-5 pt-3 border-t border-spark-border flex justify-between text-xs font-semibold">
+                    <div className="w-full mt-5 pt-3 border-t border-spark-border flex justify-between text-xs font-semibold">
                       <span className="text-spark-secondary">
                         Telah Diambil:{" "}
                         <strong className="text-emerald-600 dark:text-emerald-400 ml-1 font-bold">
@@ -323,14 +390,22 @@ export default function SemesterPlannerPage() {
                         </strong>
                       </span>
                     </div>
-                  </div>
+                  </button>
 
                   {/* Card Pilihan */}
-                  <div className="p-5 border rounded-2xl bg-gradient-to-br from-purple-50 to-purple-100/20 dark:from-purple-950/20 dark:to-slate-900/40 border-purple-500/15 flex flex-col justify-between hover:border-purple-500/30 transition-all shadow-md">
-                    <div>
-                      <h4 className="text-[10px] font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider mb-2">
-                        Kelompok MK Pilihan
-                      </h4>
+                  <button
+                    onClick={() => setActiveCategory("pilihan")}
+                    className="text-left w-full p-5 border rounded-2xl bg-gradient-to-br from-purple-50 to-purple-100/20 dark:from-purple-950/20 dark:to-slate-900/40 border-purple-500/15 flex flex-col justify-between hover:border-purple-500/30 hover:scale-[1.02] active:scale-[0.99] transition-all shadow-md group focus:outline-none"
+                  >
+                    <div className="w-full">
+                      <div className="flex justify-between items-start">
+                        <h4 className="text-[10px] font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider mb-2">
+                          Kelompok MK Pilihan
+                        </h4>
+                        <span className="text-[10px] font-bold text-purple-500/70 opacity-0 group-hover:opacity-100 transition-opacity">
+                          Detail &rarr;
+                        </span>
+                      </div>
                       <p className="text-2xl font-black text-spark-primary">
                         15{" "}
                         <span className="text-xs font-bold text-spark-muted ml-1">
@@ -338,7 +413,7 @@ export default function SemesterPlannerPage() {
                         </span>
                       </p>
                     </div>
-                    <div className="mt-5 pt-3 border-t border-spark-border flex justify-between text-xs font-semibold">
+                    <div className="w-full mt-5 pt-3 border-t border-spark-border flex justify-between text-xs font-semibold">
                       <span className="text-spark-secondary">
                         Telah Diambil:{" "}
                         <strong className="text-purple-600 dark:text-purple-400 ml-1 font-bold">
@@ -352,7 +427,7 @@ export default function SemesterPlannerPage() {
                         </strong>
                       </span>
                     </div>
-                  </div>
+                  </button>
                 </div>
               </div>
             )}
@@ -401,86 +476,302 @@ export default function SemesterPlannerPage() {
               })}
             </div>
 
+            {/* Analisis Kesesuaian Plan */}
+            {(() => {
+              const activePlanConfig = planUIConfig[selectedPlan];
+              return (
+                <div className="bg-spark-card rounded-3xl border border-spark-border p-6 shadow-lg space-y-4 animate-scale-in text-spark-primary">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center bg-gradient-to-br ${activePlanConfig.badgeColor} text-white font-bold text-sm shadow-sm`}>
+                      💡
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-black text-spark-primary">
+                        Analisis Kesesuaian: <span className="font-extrabold text-blue-600 dark:text-blue-400">{plannerData.plans[selectedPlan].title}</span>
+                      </h3>
+                      <p className="text-[10px] font-semibold text-spark-secondary">
+                        Siapa yang cocok memilih plan ini?
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                    <div className="space-y-3">
+                      <div className="p-4 rounded-2xl bg-slate-50/50 dark:bg-slate-950/40 border border-spark-border/60">
+                        <h4 className="text-[10px] font-black text-spark-muted uppercase tracking-wider mb-1">
+                          Karakteristik & Profil Mahasiswa
+                        </h4>
+                        <p className="text-xs font-semibold text-spark-secondary leading-relaxed">
+                          {activePlanConfig.suitability}
+                        </p>
+                      </div>
+                      <div className="p-4 rounded-2xl bg-slate-50/50 dark:bg-slate-950/40 border border-spark-border/60">
+                        <h4 className="text-[10px] font-black text-spark-muted uppercase tracking-wider mb-1">
+                          Kesesuaian Beban Studi
+                        </h4>
+                        <p className="text-xs font-semibold text-spark-secondary leading-relaxed">
+                          {activePlanConfig.targetProfile}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="p-4 rounded-2xl bg-slate-50/50 dark:bg-slate-950/40 border border-spark-border/60 space-y-3">
+                      <h4 className="text-[10px] font-black text-spark-muted uppercase tracking-wider">
+                        Alasan Rekomendasi
+                      </h4>
+                      <ul className="space-y-2.5">
+                        {activePlanConfig.reasons.map((reason, idx) => (
+                          <li key={idx} className="flex items-start gap-2.5 text-xs text-spark-secondary font-semibold">
+                            <span className="w-4 h-4 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                            </span>
+                            <span className="leading-snug">{reason}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
             {/* Schedule Detail Section */}
-            <div className="bg-spark-card rounded-3xl border shadow-lg overflow-hidden">
+            <div className="bg-spark-card rounded-3xl border shadow-lg overflow-hidden border-spark-border">
               <div className="bg-slate-50/50 dark:bg-slate-950/40 border-b border-spark-border px-6 py-4 flex items-center gap-3">
                 <BookOpen className="w-5 h-5 text-blue-600" />
                 <h3 className="text-sm font-bold text-spark-primary">
                   Rincian Jadwal:{" "}
-                  <span className="text-blue-600 ml-1">
+                  <span className="text-blue-600 ml-1 font-black">
                     {plannerData.plans[selectedPlan].title}
                   </span>
                 </h3>
               </div>
 
               <div className="p-6 space-y-6">
-                {plannerData.plans[selectedPlan].schedule.map((semester, idx) => (
-                  <div
-                    key={idx}
-                    className="border border-spark-border bg-slate-50/30 dark:bg-slate-950/20 rounded-2xl overflow-hidden"
-                  >
-                    <div className="bg-slate-50/60 dark:bg-slate-950/40 px-4 py-3 border-b border-spark-border flex justify-between items-center">
-                      <div>
-                        <h4 className="text-xs font-black text-spark-primary uppercase tracking-wide">
-                          {semester.periode}
-                        </h4>
-                        <p className="text-[10px] font-bold text-spark-secondary mt-0.5">
-                          {semester.fokus}
-                        </p>
+                {plannerData.plans[selectedPlan].schedule.map((semester, idx) => {
+                  const totalPlannedSks = semester.courses.reduce((acc, c) => acc + (c.sks || 0), 0);
+                  return (
+                    <div
+                      key={idx}
+                      className="border border-spark-border bg-slate-50/30 dark:bg-slate-950/20 rounded-2xl overflow-hidden"
+                    >
+                      <div className="bg-slate-50/60 dark:bg-slate-950/40 px-4 py-3 border-b border-spark-border flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                        <div>
+                          <h4 className="text-xs font-black text-spark-primary uppercase tracking-wide">
+                            {semester.periode}
+                          </h4>
+                          <p className="text-[10px] font-bold text-spark-secondary mt-0.5">
+                            {semester.fokus}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-[10px] font-extrabold px-2.5 py-1 bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 rounded-lg shadow-sm">
+                            Planned: {totalPlannedSks} SKS
+                          </span>
+                          <span className="text-[10px] font-extrabold px-2.5 py-1 bg-spark-card border rounded-lg text-spark-secondary shadow-sm">
+                            Maks: {semester.max_sks} SKS
+                          </span>
+                        </div>
                       </div>
-                      <span className="text-xs font-bold px-2.5 py-1 bg-spark-card border rounded-lg text-spark-secondary shadow-sm">
-                        Maks {semester.max_sks} SKS
-                      </span>
-                    </div>
 
-                    <ul className="divide-y divide-spark-border">
-                      {semester.courses.length > 0 ? (
-                        semester.courses.map((course, cIdx) => (
-                          <li
-                            key={cIdx}
-                            className="px-4 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/50 dark:hover:bg-white/5 transition-colors"
-                          >
-                            <div className="flex flex-col min-w-0">
-                              <span className="text-[10px] font-bold text-spark-muted mb-0.5 font-mono">
-                                {course.kode}
-                              </span>
-                              <span className="text-xs font-bold text-spark-primary break-words">
-                                {course.nama}
-                              </span>
-                              <span className="text-[10px] font-medium text-spark-muted mt-0.5 italic">
-                                {course.kategori || "Sesuai Kurikulum"}
-                              </span>
-                            </div>
-                            <div className="flex items-center gap-3 self-end sm:self-auto flex-shrink-0">
-                              <span
-                                className={`text-[9px] font-extrabold uppercase px-2 py-0.5 rounded ${course.tipe === "Wajib"
-                                  ? "bg-blue-500/10 border border-blue-500/20 text-blue-600"
-                                  : course.tipe === "Agama" || course.kode.startsWith("UG")
-                                    ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-600"
-                                    : "bg-purple-500/10 border border-purple-500/20 text-purple-600"
-                                  }`}
-                              >
-                                {course.tipe}
-                              </span>
-                              <span className="text-xs font-black text-spark-primary w-12 text-right">
-                                {course.sks} SKS
-                              </span>
-                            </div>
+                      <ul className="divide-y divide-spark-border">
+                        {semester.courses.length > 0 ? (
+                          semester.courses.map((course, cIdx) => (
+                            <li
+                              key={cIdx}
+                              className="px-4 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/50 dark:hover:bg-white/5 transition-colors"
+                            >
+                              <div className="flex flex-col min-w-0">
+                                <span className="text-[10px] font-bold text-spark-muted mb-0.5 font-mono">
+                                  {course.kode}
+                                </span>
+                                <span className="text-xs font-bold text-spark-primary break-words">
+                                  {course.nama}
+                                </span>
+                                <span className="text-[10px] font-medium text-spark-muted mt-0.5 italic">
+                                  {course.kategori || "Sesuai Kurikulum"}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-3 self-end sm:self-auto flex-shrink-0">
+                                <span
+                                  className={`text-[9px] font-extrabold uppercase px-2 py-0.5 rounded ${course.tipe === "Wajib"
+                                    ? "bg-blue-500/10 border border-blue-500/20 text-blue-600"
+                                    : course.tipe === "Agama" || course.kode.startsWith("UG")
+                                      ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-600"
+                                      : "bg-purple-500/10 border border-purple-500/20 text-purple-600"
+                                    }`}
+                                >
+                                  {course.tipe}
+                                </span>
+                                <span className="text-xs font-black text-spark-primary w-12 text-right">
+                                  {course.sks} SKS
+                                </span>
+                              </div>
+                            </li>
+                          ))
+                        ) : (
+                          <li className="px-4 py-6 text-center text-xs font-bold text-spark-muted">
+                            Tidak ada jadwal kelas teori
                           </li>
-                        ))
-                      ) : (
-                        <li className="px-4 py-6 text-center text-xs font-bold text-spark-muted">
-                          Tidak ada jadwal kelas teori
-                        </li>
-                      )}
-                    </ul>
-                  </div>
-                ))}
+                        )}
+                      </ul>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
         )}
       </div>
+
+      {/* Detail Kategori Modal */}
+      {activeCategory && plannerData?.metadata?.distribusi_sks?.[activeCategory] && (() => {
+        const catData = plannerData.metadata.distribusi_sks[activeCategory];
+        const takenCourses = catData.courses_taken || [];
+        const remainingCourses = catData.courses_remaining || [];
+        const meta = categoryMeta[activeCategory];
+
+        return (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in text-spark-primary">
+            <div className="bg-spark-card border border-spark-border rounded-3xl w-full max-w-3xl max-h-[85vh] overflow-hidden flex flex-col shadow-2xl animate-scale-in text-spark-primary">
+              
+              {/* Header */}
+              <div className="p-6 border-b border-spark-border flex items-start justify-between gap-4">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2.5">
+                    <span className={`px-2.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider ${meta.colorClass}`}>
+                      {meta.abbreviation}
+                    </span>
+                    <h3 className="text-lg font-black tracking-tight">
+                      {meta.title}
+                    </h3>
+                  </div>
+                  <p className="text-xs font-semibold text-spark-secondary leading-relaxed">
+                    {meta.description}
+                  </p>
+                </div>
+                <button
+                  onClick={() => setActiveCategory(null)}
+                  className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 text-spark-muted hover:text-spark-primary transition-colors focus:outline-none"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* SKS Summary Indicators */}
+              <div className="px-6 py-4 bg-slate-50/50 dark:bg-slate-950/25 border-b border-spark-border grid grid-cols-3 gap-4 text-center">
+                <div>
+                  <span className="text-[10px] font-bold text-spark-muted uppercase tracking-wider block">Target Kurikulum</span>
+                  <span className="text-base font-black text-spark-primary mt-0.5 block">{catData.target} SKS</span>
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold text-spark-muted uppercase tracking-wider block">Telah Diambil</span>
+                  <span className="text-base font-black text-emerald-600 dark:text-emerald-400 mt-0.5 block">{catData.diambil} SKS</span>
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold text-spark-muted uppercase tracking-wider block">Sisa Belum Diambil</span>
+                  <span className="text-base font-black text-red-500 mt-0.5 block">{catData.sisa} SKS</span>
+                </div>
+              </div>
+
+              {/* Course Lists Grid */}
+              <div className="p-6 overflow-y-auto flex-1 min-h-0 grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                {/* Column 1: Telah Diambil */}
+                <div className="flex flex-col min-h-0">
+                  <div className="flex items-center justify-between mb-3 flex-shrink-0">
+                    <h4 className="text-xs font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+                      <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                      Telah Diambil ({takenCourses.length})
+                    </h4>
+                    <span className="text-[10px] font-bold text-spark-muted">
+                      Total: {catData.diambil} SKS
+                    </span>
+                  </div>
+                  
+                  <div className="flex-1 overflow-y-auto border border-spark-border/60 bg-slate-50/10 dark:bg-slate-950/10 rounded-2xl p-3 space-y-2 max-h-[350px]">
+                    {takenCourses.length > 0 ? (
+                      takenCourses.map((c, i) => (
+                        <div key={i} className="flex items-start gap-2.5 p-2.5 rounded-xl bg-emerald-500/5 border border-emerald-500/10 hover:border-emerald-500/25 transition-all">
+                          <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
+                          <div className="min-w-0 flex-1">
+                            <span className="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 block font-mono uppercase">
+                              {c.kode}
+                            </span>
+                            <span className="text-xs font-bold text-spark-primary block truncate" title={c.nama}>
+                              {c.nama}
+                            </span>
+                            <span className="text-[9px] font-semibold text-spark-muted mt-0.5 block">
+                              {c.sks} SKS
+                            </span>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="py-10 text-center text-xs font-semibold text-spark-muted">
+                        Belum ada mata kuliah yang diambil
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Column 2: Belum Diambil */}
+                <div className="flex flex-col min-h-0">
+                  <div className="flex items-center justify-between mb-3 flex-shrink-0">
+                    <h4 className="text-xs font-black text-amber-500 uppercase tracking-wider flex items-center gap-1.5">
+                      <div className="w-2 h-2 rounded-full bg-amber-500" />
+                      Belum Diambil ({remainingCourses.length})
+                    </h4>
+                    <span className="text-[10px] font-bold text-spark-muted">
+                      {activeCategory === "pilihan" ? "Pilih dari pool" : `Sisa: ${catData.sisa} SKS`}
+                    </span>
+                  </div>
+                  
+                  <div className="flex-1 overflow-y-auto border border-spark-border/60 bg-slate-50/10 dark:bg-slate-950/10 rounded-2xl p-3 space-y-2 max-h-[350px]">
+                    {remainingCourses.length > 0 ? (
+                      remainingCourses.map((c, i) => (
+                        <div key={i} className="flex items-start gap-2.5 p-2.5 rounded-xl bg-slate-500/5 border border-spark-border hover:border-blue-500/30 hover:bg-slate-50 dark:hover:bg-white/5 transition-all">
+                          <div className="w-4 h-4 rounded-full border border-spark-border/80 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <div className="w-1.5 h-1.5 rounded-full bg-spark-border/80" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <span className="text-[9px] font-bold text-spark-muted block font-mono uppercase">
+                              {c.kode}
+                            </span>
+                            <span className="text-xs font-bold text-spark-primary block truncate" title={c.nama}>
+                              {c.nama}
+                            </span>
+                            <span className="text-[9px] font-semibold text-spark-muted mt-0.5 block">
+                              {c.sks} SKS
+                            </span>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="py-10 text-center text-xs font-semibold text-emerald-600 flex flex-col items-center gap-2">
+                        <CheckCircle className="w-8 h-8 text-emerald-500" />
+                        <span>Selamat! Semua mata kuliah kategori ini telah diambil.</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Footer Note */}
+              <div className="px-6 py-4 bg-slate-50/80 dark:bg-slate-950/40 border-t border-spark-border text-[10px] font-medium text-spark-muted flex items-center gap-2">
+                <Info className="w-3.5 h-3.5 text-blue-500 flex-shrink-0" />
+                <span>
+                  {activeCategory === "pilihan"
+                    ? "Daftar di atas adalah seluruh mata kuliah pilihan yang tersedia di kurikulum. Anda hanya perlu mengambil secukupnya untuk memenuhi target 15 SKS."
+                    : "Data diambil dan dianalisis secara otomatis berdasarkan transkrip akademik yang Anda unggah."}
+                </span>
+              </div>
+
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Animations */}
       <style>{`
@@ -490,6 +781,13 @@ export default function SemesterPlannerPage() {
         }
         .animate-scale-in {
           animation: scaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        .animate-fade-in {
+          animation: fadeIn 0.2s ease-out forwards;
         }
       `}</style>
     </div>
